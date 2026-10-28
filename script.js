@@ -154,6 +154,12 @@ var SCENES = [
   'Tamat. Sampai jumpa di petualangan berikutnya!' ]}
 ];
 var TOTAL = SCENES.length;
+var CAST = { 'Dino Biru': '#4cc3ff', 'Dino Merah': '#ff6b6b', 'Dino Kuning': '#ffd23f' };
+function speaker(t) {                        // siapa yang berbicara (untuk label berwarna)
+  if (t.indexOf('“') < 0) return null;
+  var m = t.replace(/“[^”]*”/g, ' ').match(/Dino (Biru|Merah|Kuning)/);
+  return m ? 'Dino ' + m[1] : null;
+}
 var AR = [1.82,1.36,1.16,1.32,1.77,1.7,1.56,1.7,1.52,1.62,1.66,1.89,1.78,1.32,1.19,1.39];   // rasio lebar/tinggi tiap gambar (untuk tata letak)
 
 /* ============ Pengaturan waktu baca (adaptif jumlah kata) ============ */
@@ -179,7 +185,7 @@ SCENES.forEach(function (sc) {
   sc.image = img(sc.id); sc.ar = AR[sc.id - 1];
   sc.segs = [];
   sc.lines.forEach(function (l) {
-    splitLong(l).forEach(function (p) { sc.segs.push({ t: p, d: p.indexOf('“') > -1, w: wc(p) }); });
+    splitLong(l).forEach(function (p) { sc.segs.push({ t: p, d: p.indexOf('“') > -1, w: wc(p), who: speaker(p) }); });
   });
   sc.duration = sc.segs.reduce(function (a, s) { return a + readMs(s.t); }, TAIL_MS);   // ms pada kecepatan Normal
 });
@@ -188,7 +194,8 @@ SCENES.forEach(function (sc) {
 function $(id) { return document.getElementById(id); }
 var body = document.body, app = $('app');
 var layers = [$('layerA'), $('layerB')], cur = null;
-var textEl = $('text'), glass = $('glass'), bar = $('progress'), barI = bar.firstElementChild;
+var textEl = $('text'), glass = $('glass'), bar = $('progress'), fills = [];
+(function () { for (var i = 0; i < TOTAL; i++) { var c = document.createElement('i'), b = document.createElement('b'); b.style.background = 'hsl(' + Math.round(i * 22) + ',92%,62%)'; c.appendChild(b); bar.appendChild(c); fills.push(b); } })()
 var S = { intro: false, music: true, scene: 0, seg: 0, playing: true, speed: 1, voice: false, ended: false, endPane: 1, auto: false };
 var timer = 0, capTimer = 0, token = 0, uiT = 0, toastT = 0, chapT = 0, leaving = false;
 body.className = '';
@@ -305,7 +312,7 @@ function preload(i) {
 var DIRS = [['-1.2%', '-.8%'], ['1.2%', '-.6%'], ['0', '-1.2%'], ['-1%', '.9%'], ['1%', '.7%']];
 function buildLayer(el, sc, i) {
   var im = el.querySelector('img');
-  el.classList.remove('broken');
+  el.classList.remove('broken'); el.setAttribute('data-ar', sc.ar);
   im.classList.remove('kb');
   im.onerror = function () { el.classList.add('broken'); };
   im.onload = function () { el.classList.remove('broken'); };
@@ -325,13 +332,17 @@ function afterImg(im, cb, max) {
 }
 
 function setProgress(sceneIdx, segIdx) {
-  var sc = SCENES[sceneIdx], f = (sceneIdx + (segIdx + 1) / (sc.segs.length + 1)) / TOTAL;
-  var pct = Math.round(f * 100);
-  barI.style.width = pct + '%'; bar.setAttribute('aria-valuenow', pct);
+  var sc = SCENES[sceneIdx], part = sceneIdx >= TOTAL ? 0 : (segIdx + 1) / (sc.segs.length + 1);
+  for (var i = 0; i < fills.length; i++) fills[i].style.width = (i < sceneIdx ? 100 : i === sceneIdx ? Math.round(part * 100) : 0) + '%';
+  bar.setAttribute('aria-valuenow', Math.round((sceneIdx + part) / TOTAL * 100));
+}
+function setCounter(a, b) {
+  var c = $('counter'); c.firstChild.textContent = a; c.lastChild.textContent = b || '';
+  c.setAttribute('aria-label', a + (b ? ': ' + b : ''));
 }
 function updateUI() {
   var sc = SCENES[S.scene];
-  $('counter').textContent = 'Adegan ' + sc.id + ' dari ' + TOTAL + ' • ' + sc.title;
+  setCounter('Adegan ' + sc.id + ' dari ' + TOTAL, sc.title);
 }
 function flashChapter(sc) {
   var c = $('chapter'); c.textContent = 'Adegan ' + sc.id + ' • ' + sc.title;
@@ -341,6 +352,10 @@ function flashChapter(sc) {
 function renderText(seg, ms, instant) {
   glass.classList.toggle('dia', seg.d);
   glass.classList.toggle('static', !!instant);
+  var who = $('who');
+  if (seg.who) { who.hidden = false; who.textContent = seg.who; glass.style.setProperty('--c', CAST[seg.who]); }
+  else { who.hidden = true; glass.style.removeProperty('--c'); }
+  glass.classList.toggle('has-who', !!seg.who);
   textEl.textContent = '';
   var words = seg.t.split(/\s+/), span = Math.min(ms * 0.55, words.length * 300);
   for (var i = 0; i < words.length; i++) {
@@ -351,7 +366,7 @@ function renderText(seg, ms, instant) {
     if (i < words.length - 1) textEl.appendChild(document.createTextNode(' '));   // spasi antarkata (perbaikan bug kata menempel)
   }
 }
-function clearText() { textEl.textContent = ''; glass.classList.remove('dia'); }
+function clearText() { textEl.textContent = ''; glass.classList.remove('dia', 'has-who'); glass.style.removeProperty('--c'); $('who').hidden = true; }
 function showTitle(on) { $('titleCard').classList.toggle('on', on); body.classList.toggle('title-on', on); }
 
 function applyLayout(sc) {
@@ -367,7 +382,16 @@ function applyLayout(sc) {
   body.classList.toggle('side', side);
   if (side) body.style.setProperty('--pw', pw + 'px');
 }
-window.addEventListener('resize', function () { applyLayout(); });
+function fitCards() {
+  for (var i = 0; i < layers.length; i++) {
+    var el = layers[i], f = el.querySelector('.frame'), c = el.querySelector('.card'), cs = window.getComputedStyle(f);
+    var w = f.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0);
+    var h = f.clientHeight - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0);
+    var ar = parseFloat(el.getAttribute('data-ar')) || 1.5, cw = Math.max(0, Math.min(w, h * ar));
+    c.style.width = cw + 'px'; c.style.height = (cw / ar) + 'px';
+  }
+}
+window.addEventListener('resize', function () { applyLayout(); fitCards(); });
 
 function enterScene(i, opts) {
   opts = opts || {};
@@ -376,7 +400,7 @@ function enterScene(i, opts) {
   S.scene = i; S.seg = 0;
   var sc = SCENES[i], my = token;
   var target = layers[0] === cur ? layers[1] : layers[0];
-  var im = buildLayer(target, sc, i); applyLayout(sc);
+  var im = buildLayer(target, sc, i); applyLayout(sc); fitCards();
   clearText(); updateUI(); setProgress(i, -1); preload(i + 1); preload(i + 2);
   afterImg(im, function () {
     if (my !== token) return;
@@ -414,11 +438,13 @@ function playSegment(k) {
 
 /* ============ Penutup ============ */
 (function buildEnding() {
-  var ul = $('morals');
+  var ul = $('morals'), COL = ['#ff6b6b', '#ffa52e', '#4cc3ff', '#b388ff', '#5fd97a'];
   MORALS.forEach(function (m, i) {
-    var li = document.createElement('li'); li.style.animationDelay = (0.5 + i * 0.6) + 's';
-    li.innerHTML = '<b></b><span></span>'; li.firstChild.textContent = m[0] + ' ' + m[1]; li.lastChild.textContent = m[2];
-    ul.appendChild(li);
+    var li = document.createElement('li'); li.style.animationDelay = (0.4 + i * 0.35) + 's'; li.style.setProperty('--c', COL[i % 5]);
+    var em = document.createElement('span'); em.className = 'em'; em.textContent = m[0];
+    var box = document.createElement('div'), t = document.createElement('b'), d = document.createElement('small');
+    t.textContent = m[1]; d.textContent = m[2]; box.appendChild(t); box.appendChild(document.createElement('br')); box.appendChild(d);
+    li.appendChild(em); li.appendChild(box); ul.appendChild(li);
   });
   $('closing').textContent = CLOSING;
 })();
@@ -427,9 +453,10 @@ function showEnding() {
   clearTimers(); stopSpeech(); showTitle(false); clearText();
   S.ended = true; S.endPane = 1; body.classList.add('is-end');
   S.playing = true; body.classList.remove('paused');
-  barI.style.width = '100%'; bar.setAttribute('aria-valuenow', 100);
-  fx.set(null); $('light').classList.add('on');
-  $('counter').textContent = 'Tamat';
+  setProgress(TOTAL, 0); bar.setAttribute('aria-valuenow', 100);
+  $('endImg').src = SCENES[TOTAL - 1].image; $('ending').style.setProperty('--endbg', 'url("' + SCENES[TOTAL - 1].image + '")');
+  fx.set('confetti'); $('light').classList.remove('on');
+  setCounter('Tamat', '');
   playEnding(1);
 }
 function playEnding(pane) {
@@ -520,7 +547,7 @@ $('btnPrev').onclick = prev;
 $('btnNext').onclick = next;
 $('btnSpeed').onclick = cycleSpeed;
 $('btnVoice').onclick = toggleVoice;
-$('btnMusic').onclick = $('introMusic').onclick = toggleMusic;
+(function () { var m = document.querySelectorAll('.js-music'); for (var i = 0; i < m.length; i++) m[i].onclick = toggleMusic; })();
 $('introSkip').onclick = function () { endIntro(true); };
 $('btnFull').onclick = toggleFs;
 $('btnReplay').onclick = restart;
@@ -538,7 +565,7 @@ document.addEventListener('focusin', function (e) { if (e.target.closest && e.ta
 
 /* ============ Keyboard & remote Smart TV ============ */
 function focusables() {
-  var sel = body.classList.contains('is-end') ? '#ending.p2 .cta, #topbar .btn' : '#topbar .btn, #transport .btn';
+  var sel = body.classList.contains('is-end') ? '#ending.p2 .cta, #endMusic' : '#topbar .btn, #transport .btn';
   var all = document.querySelectorAll(sel), out = [];
   for (var i = 0; i < all.length; i++) if (!all[i].hidden && all[i].offsetParent !== null) out.push(all[i]);
   return out;
@@ -611,7 +638,7 @@ var fx = (function () {
   }
   function make(tp) {
     var area = W * H / 1000000, n, i; parts = [];
-    n = tp === 'rain' ? Math.min(130, Math.round(60 + area * 40)) : tp === 'stars' ? 48 : tp === 'fireflies' ? 20 : 30;
+    n = tp === 'rain' ? Math.min(130, Math.round(60 + area * 40)) : tp === 'stars' ? 48 : tp === 'fireflies' ? 20 : tp === 'confetti' ? 46 : 30;
     for (i = 0; i < n; i++) parts.push({ x: rnd(W), y: tp === 'stars' ? rnd(H * 0.5) : rnd(H), p: rnd(6.28), s: 0.4 + rnd(1), c: RB[i % 6], l: 10 + rnd(14) });
   }
   function draw(dt) {
@@ -630,6 +657,10 @@ var fx = (function () {
         if (p.y < -20) p.y = H + 10; if (p.x < -20) p.x = W + 10; if (p.x > W + 20) p.x = -10;
         ctx.globalAlpha = 0.25 + 0.6 * Math.abs(Math.sin(tm * 0.025 * p.s + p.p)); var z = 14 + p.s * 10; ctx.drawImage(sp, p.x - z / 2, p.y - z / 2, z, z); }
       ctx.globalAlpha = 1;
+    } else if (type === 'confetti') {
+      for (i = 0; i < parts.length; i++) { p = parts[i]; p.y += (1.1 + p.s * 1.5) * dt; p.x += Math.sin(tm * 0.02 + p.p) * 0.7 * dt; p.r = (p.r || 0) + 0.05 * dt * p.s;
+        if (p.y > H + 20) { p.y = -20; p.x = rnd(W); }
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.c; ctx.fillRect(-4, -2.5, 8 + p.s * 3, 5); ctx.restore(); }
     } else if (type === 'sparkle') {
       for (i = 0; i < parts.length; i++) { p = parts[i]; p.y -= 0.12 * p.s * dt; p.x += Math.sin(tm * 0.01 + p.p) * 0.2 * dt; if (p.y < -20) { p.y = H + 10; p.x = rnd(W); }
         ctx.globalAlpha = 0.15 + 0.7 * Math.abs(Math.sin(tm * 0.03 * p.s + p.p)); var q = 10 + p.s * 14; ctx.drawImage(sprite(p.c), p.x - q / 2, p.y - q / 2, q, q); }
@@ -640,7 +671,7 @@ var fx = (function () {
   function stop() { if (raf) cancelAnimationFrame(raf); raf = 0; }
   function run() {
     stop();
-    if (!ctx || !type || reduce || !S.playing || document.hidden || S.ended) return;
+    if (!ctx || !type || reduce || !S.playing || document.hidden || (S.ended && type !== 'confetti')) return;
     last = performance.now(); raf = requestAnimationFrame(loop);
   }
   function set(tp, playing) {

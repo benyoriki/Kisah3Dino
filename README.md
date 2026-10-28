@@ -9,6 +9,7 @@ Tiga-Dino/
 ├── style.css
 ├── script.js          ← data 16 adegan (SCENES), timer, navigasi, narasi suara, efek
 ├── assets/images/     ← adegan-01.jpg … adegan-16.jpg
+├── assets/fonts/      ← Fredoka & Nunito (lisensi OFL), dipasang lokal tanpa CDN
 ├── assets/audio/      ← lagu_01.mp3 (pembuka), lagu_02.mp3 (musik cerita, diulang)
 └── README.md
 ```
@@ -42,3 +43,10 @@ Tombol Home menghentikan cerita, suara, dan timer, fade-out, lalu membuka https:
 - **Pembukaan**: layar hitam berisi judul, tujuan cerita, dan pembuat. Ubah teksnya di objek `INTRO` (`script.js`), terutama baris `credit` (nama pembuat).
 - **Musik**: `lagu_01` mulai 3 detik setelah halaman dibuka, `lagu_02` mulai saat gambar pertama masuk dan diulang sampai selesai. Tombol ♪ menyalakan/mematikan musik (juga tombol M). Musik mengecil otomatis saat suara narator aktif. Jika browser memblokir suara otomatis, ketuk layar sekali dan musik menyala.
 - **Tata letak**: HP landscape / layar lebar otomatis memakai narasi di samping gambar bila gambar jadi lebih besar; HP portrait dan PC 16:9 memakai narasi di bawah gambar.
+
+## Desain (v3)
+- Gaya "liquid glass": kaca buram bening untuk narasi, dok kontrol, dan chip; gambar tampil sebagai kartu membulat dengan zoom halus dan latar blur yang bergerak pelan.
+- Dialog diberi label warna tokoh (Dino Biru / Merah / Kuning) otomatis dari naskah.
+- Progres 16 segmen berwarna pelangi di bagian atas layar.
+- Penutup: lencana pesan moral, kartu gambar akhir di samping teks penutup, dan confetti ringan.
+- Smart TV (lebar ≥1700 px): huruf narasi lebih besar dan cincin fokus tebal untuk remote.
