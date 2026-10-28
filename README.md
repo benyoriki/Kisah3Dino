@@ -8,9 +8,9 @@ Tiga-Dino/
 ├── index.html
 ├── style.css
 ├── script.js          ← data 16 adegan (SCENES), timer, navigasi, narasi suara, efek
-├── assets/images/     ← adegan-01.jpg … adegan-16.jpg
+├── assets/images/     ← adegan-01.webp … 16.webp (utama) + .jpg (cadangan TV lama)
 ├── assets/fonts/      ← Fredoka & Nunito (lisensi OFL), dipasang lokal tanpa CDN
-├── assets/audio/      ← lagu_01.mp3 (pembuka), lagu_02.mp3 (musik cerita, diulang)
+├── assets/audio/      ← lagu_01.mp3 (pembuka), lagu_02.mp3 (musik cerita, diulang; 96 kbps ±2,3 MB)
 └── README.md
 ```
 
@@ -40,8 +40,8 @@ Tombol Home menghentikan cerita, suara, dan timer, fade-out, lalu membuka https:
 - **Teks/adegan**: edit array `SCENES` di `script.js` (`lines`, `title`, `fx`, `light`).
 - **Kecepatan baca**: `WPM`, `MIN_MS`, `MAX_MS`, dan `SPEEDS` di bagian atas `script.js` (default ±170 kata/menit).
 - **Narasi suara**: memakai Web Speech API bila perangkat punya suara bahasa Indonesia; bila tidak, tombol memberi pesan ramah dan cerita tetap berjalan. Fungsi `speak()` terisolasi sehingga mudah diganti dengan file audio rekaman (`assets/audio/`) di pengembangan berikutnya.
-- **Pembukaan**: layar hitam berisi judul, tujuan cerita, dan pembuat. Ubah teksnya di objek `INTRO` (`script.js`), terutama baris `credit` (nama pembuat).
-- **Musik**: `lagu_01` mulai 3 detik setelah halaman dibuka, `lagu_02` mulai saat gambar pertama masuk dan diulang sampai selesai. Tombol ♪ menyalakan/mematikan musik (juga tombol M). Musik mengecil otomatis saat suara narator aktif. Jika browser memblokir suara otomatis, ketuk layar sekali dan musik menyala.
+- **Pembukaan**: layar judul dengan tombol Play 3D emas dan "MULAI CERITA". Ubah teksnya di objek `INTRO` (`script.js`).
+- **Musik**: `lagu_01` mulai saat tombol Play ditekan, lalu `lagu_02` mengalun dan diulang sampai selesai. Audio baru diunduh setelah tombol ditekan. Tombol ♪ menyalakan/mematikan musik (juga tombol M). Musik mengecil otomatis saat suara narator aktif. Jika browser memblokir suara otomatis, ketuk layar sekali dan musik menyala.
 - **Tata letak**: HP landscape / layar lebar otomatis memakai narasi di samping gambar bila gambar jadi lebih besar; HP portrait dan PC 16:9 memakai narasi di bawah gambar.
 
 ## Desain (v3)
@@ -50,3 +50,11 @@ Tombol Home menghentikan cerita, suara, dan timer, fade-out, lalu membuka https:
 - Progres 16 segmen berwarna pelangi di bagian atas layar.
 - Penutup: lencana pesan moral, kartu gambar akhir di samping teks penutup, dan confetti ringan.
 - Smart TV (lebar ≥1700 px): huruf narasi lebih besar dan cincin fokus tebal untuk remote.
+- Performa: efek kaca memakai tint pekat tanpa `backdrop-filter` (latar sudah diblur sekali), dan animasi latar hanya berjalan pada adegan aktif, sehingga lebih hemat baterai di HP kelas menengah.
+
+## Perubahan v4
+- Layar pembuka baru: tombol Play 3D emas + MULAI CERITA (Enter pada remote juga memulai).
+- Gambar WebP dengan cadangan JPG; `lagu_02.mp3` dikecilkan dari 6,2 MB ke 2,3 MB; audio dan gambar berikutnya dimuat bertahap.
+- Narasi dipecah per kalimat (maks. 24 kata), dialog tidak terpotong; panel lebih rapat di HP landscape.
+- Zoom kamera lebih halus (3,5%), crossfade 1,6 detik, latar blur statis.
+- Klik mouse selalu menampilkan kontrol; sentuhan tetap tampil/sembunyi.

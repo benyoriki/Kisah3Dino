@@ -12,9 +12,7 @@ var INTRO = {
   title:   'Tiga Dino Sahabat Hebat',
   sub:     'Petualangan Mencari Pelangi Ajaib 🌈',
   purpose: 'Cerita ini mengajak adik-adik belajar berani mencoba, tidak mudah menyerah, saling membantu, berpikir sebelum bertindak, dan menjaga alam bersama sahabat.',
-  credit:  'Dibuat oleh <b>Belajar Bermain</b> • belajarbermain.online',
-  musicAt: 3000,    // lagu_01 mulai 3 detik setelah website dibuka
-  revealAt: 12000   // setelah lagu_01 selesai (±9 dtk): masuk perlahan ke gambar pertama + lagu_02
+  credit:  'Dibuat oleh <b>Belajar Bermain</b> • belajarbermain.online'
 };
 var MORALS = [
   ['💪', 'Berani mencoba', 'Jangan takut belajar hal baru.'],
@@ -27,7 +25,8 @@ var MORALS = [
 /* ============ DATA CERITA (satu sumber untuk teks, timer, navigasi) ============
    lines : urutan narasi & dialog sesuai naskah. Baris yang memuat tanda kutip “ ” dianggap dialog.
    fx    : efek suasana (rain | stars | fireflies | sparkle), light: cahaya pelangi lembut.   */
-function img(n) { return 'assets/images/adegan-' + (n < 10 ? '0' : '') + n + '.jpg'; }
+var WEBP = (function () { try { var c = document.createElement('canvas'); c.width = c.height = 1; return c.toDataURL('image/webp').indexOf('data:image/webp') === 0; } catch (e) { return false; } })();
+function img(n) { return 'assets/images/adegan-' + (n < 10 ? '0' : '') + n + (WEBP ? '.webp' : '.jpg'); }
 var SCENES = [
  { id:1, title:'Tiga Sahabat Hebat', alt:'Dino Biru, Dino Merah, dan Dino Kuning berdiri ceria di lembah penuh bunga.', fx:'fireflies', lines:[
   'Pada suatu pagi yang cerah, di sebuah lembah yang indah, hiduplah tiga sahabat dinosaurus. Mereka adalah Dino Biru yang pemberani, Dino Merah yang kuat dan bersemangat, serta Dino Kuning yang pintar dan selalu tersenyum.',
@@ -163,7 +162,7 @@ function speaker(t) {                        // siapa yang berbicara (untuk labe
 var AR = [1.82,1.36,1.16,1.32,1.77,1.7,1.56,1.7,1.52,1.62,1.66,1.89,1.78,1.32,1.19,1.39];   // rasio lebar/tinggi tiap gambar (untuk tata letak)
 
 /* ============ Pengaturan waktu baca (adaptif jumlah kata) ============ */
-var WPM = 170, BASE_MS = 900, MIN_MS = 2600, MAX_MS = 16000, TAIL_MS = 1500, TITLE_MS = 4800, MAX_WORDS = 40;
+var WPM = 170, BASE_MS = 900, MIN_MS = 2600, MAX_MS = 16000, TAIL_MS = 1500, TITLE_MS = 4800, MAX_WORDS = 24;
 var SPEEDS = [
   { key:'slow',   label:'Lambat', mul:1.35, rate:0.8 },
   { key:'normal', label:'Normal', mul:1,    rate:0.92 },
@@ -171,14 +170,29 @@ var SPEEDS = [
 ];
 function wc(t) { return t.split(/\s+/).length; }
 function readMs(t) { return Math.max(MIN_MS, Math.min(MAX_MS, wc(t) / (WPM / 60) * 1000 + BASE_MS)); }
-function splitLong(t) {                      // pecah baris panjang per kalimat (tanpa lookbehind: aman untuk TV lama)
-  if (wc(t) <= MAX_WORDS) return [t];
-  var words = t.split(/\s+/), out = [], cur = [];
-  for (var i = 0; i < words.length; i++) {
-    cur.push(words[i]);
-    if (/[.!?”]$/.test(words[i]) && cur.length >= 14 && words.length - i > 8) { out.push(cur.join(' ')); cur = []; }
+function sentences(t) {                      // pecah per kalimat; tanda kutip “ ” tidak pernah dipotong
+  var out = [], buf = '', depth = 0, i, ch, nx;
+  for (i = 0; i < t.length; i++) {
+    ch = t.charAt(i); buf += ch;
+    if (ch === '“') depth++; else if (ch === '”') depth = Math.max(0, depth - 1);
+    if (depth === 0 && /[.!?]/.test(ch)) {
+      var j = i + 1; while (j < t.length && /[.!?”]/.test(t.charAt(j))) { buf += t.charAt(j); if (t.charAt(j) === '”') depth = Math.max(0, depth - 1); j++; }
+      i = j - 1;
+      nx = t.slice(j).replace(/^\s+/, '').charAt(0);
+      if (!nx || /[A-Z“]/.test(nx)) { out.push(buf.replace(/^\s+|\s+$/g, '')); buf = ''; }
+    }
   }
-  if (cur.length) out.push(cur.join(' '));
+  if (buf.replace(/\s+/g, '')) out.push(buf.replace(/^\s+|\s+$/g, ''));
+  return out;
+}
+function splitLong(t) {                      // kelompokkan kalimat menjadi bagian pendek (maks. MAX_WORDS kata)
+  if (wc(t) <= MAX_WORDS) return [t];
+  var ss = sentences(t), out = [], cur = '';
+  for (var i = 0; i < ss.length; i++) {
+    if (cur && wc(cur) + wc(ss[i]) > MAX_WORDS) { out.push(cur); cur = ''; }
+    cur = cur ? cur + ' ' + ss[i] : ss[i];
+  }
+  if (cur) out.push(cur);
   return out;
 }
 SCENES.forEach(function (sc) {
@@ -203,12 +217,12 @@ var reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce
 
 /* ============ Musik latar (lagu_01 pembuka, lagu_02 selama cerita) ============ */
 var MUSIC_VOL = 0.55, curTrack = 0, AUDIO = {};
-function mkAudio(src) {
-  var a = new Audio(); a.preload = 'none'; a.loop = true; a.src = src; a.volume = 0;
-  a.addEventListener('error', function () { a.bad = true; });
+function mkAudio(src, loop) {                // dibuat tetapi TIDAK diunduh sampai benar-benar diputar
+  var a = new Audio(); a.preload = 'none'; a.loop = loop; a.volume = 0; a.srcPath = src;
+  a.addEventListener('error', function () { a.bad = true; if (curTrack === 1 && a === AUDIO[1]) musicSwitch(2); });
   return a;
 }
-try { AUDIO[1] = mkAudio('assets/audio/lagu_01.mp3'); AUDIO[2] = mkAudio('assets/audio/lagu_02.mp3'); } catch (e) {}
+try { AUDIO[1] = mkAudio('assets/audio/lagu_01.mp3', false); AUDIO[2] = mkAudio('assets/audio/lagu_02.mp3', true); } catch (e) {}
 function musicVol() { return S.voice ? 0.2 : MUSIC_VOL; }   // musik mengecil saat narator bicara
 function fadeTo(a, v, ms, cb) {
   clearInterval(a.fi);
@@ -220,13 +234,14 @@ function fadeTo(a, v, ms, cb) {
 }
 function playTrack(n) {
   var a = AUDIO[n]; if (!S.music || !a || a.bad) return;
-  var p; a.preload = 'auto';
+  var p; if (!a.src) a.src = a.srcPath; a.preload = 'auto';          // unduh baru di sini
   try { p = a.play(); } catch (e) { return; }
-  function ok() { body.classList.remove('need-tap'); fadeTo(a, musicVol(), 1600); }
-  function fail() { body.classList.add('need-tap'); if (!S.intro) toast('Ketuk layar untuk menyalakan musik 🎵'); }
+  function ok() { fadeTo(a, musicVol(), 1600); }
+  function fail(err) { if (err && (err.name === 'NotSupportedError' || err.name === 'AbortError')) { if (err.name === 'NotSupportedError') a.bad = true; return; } toast('Ketuk layar untuk menyalakan musik 🎵'); }
   if (p && p.then) p.then(ok, fail); else ok();
 }
 function stopTrack(n, ms) { var a = AUDIO[n]; if (!a) return; fadeTo(a, 0, ms || 800, function () { try { a.pause(); } catch (e) {} }); }
+function onTrack1End() { if (curTrack === 1 && !leaving) musicSwitch(2); }
 function musicSwitch(n) { if (curTrack && curTrack !== n) stopTrack(curTrack, 1500); curTrack = n; playTrack(n); }
 function musicStopAll() { for (var k in AUDIO) { clearInterval(AUDIO[k].fi); try { AUDIO[k].pause(); } catch (e) {} } }
 function setMusicUI() {
@@ -244,24 +259,28 @@ function duck() { var a = AUDIO[curTrack]; if (a && !a.paused && S.music) fadeTo
 function unlockAudio() { var a = AUDIO[curTrack]; if (S.music && curTrack && a && a.paused && !a.bad && !leaving) playTrack(curTrack); }
 ['pointerdown', 'keydown', 'touchend'].forEach(function (ev) { document.addEventListener(ev, unlockAudio, true); });
 
-/* ============ Pembukaan: layar hitam → keterangan → masuk perlahan ke gambar pertama ============ */
+/* ============ Layar pembuka: tombol Play 3D / MULAI CERITA memulai cerita ============ */
 var introT = [];
 function startIntro() {
   S.intro = true; body.classList.add('in-intro');
   $('iKicker').textContent = INTRO.kicker; $('iTitle').textContent = INTRO.title; $('iSub').textContent = INTRO.sub;
   $('iPurpose').textContent = INTRO.purpose; $('iCredit').innerHTML = INTRO.credit;
-  introT.push(setTimeout(function () { if (S.intro) musicSwitch(1); }, INTRO.musicAt));
-  introT.push(setTimeout(function () { endIntro(false); }, INTRO.revealAt));
+  setTimeout(function () { try { $('startBtn').focus({ preventScroll: true }); } catch (e) {} }, 2400);   // remote TV: Enter langsung memulai
 }
-function endIntro(skipped) {
-  if (!S.intro) return;
-  S.intro = false; introT.forEach(clearTimeout); introT = [];
-  var el = $('intro'); body.classList.remove('in-intro', 'need-tap');
-  if (skipped) el.classList.add('fast');
+function startStory() {
+  if (!S.intro || leaving) return;
+  S.intro = false; var el = $('intro');
+  body.classList.remove('in-intro');
+  try { document.activeElement && document.activeElement.blur(); } catch (e) {}
   el.classList.add('out');
-  musicSwitch(2);
-  enterScene(0, { noTitle: true, delay: skipped ? 700 : 2000 });
-  setTimeout(function () { el.classList.add('gone'); }, skipped ? 1600 : 3400);
+  if (S.music) {                                  // lagu_01 sebagai pembuka, lalu lagu_02 mengalun sampai cerita selesai
+    var a1 = AUDIO[1];
+    if (a1 && !a1.bad) { a1.addEventListener('ended', onTrack1End); curTrack = 1; playTrack(1); introT.push(setTimeout(onTrack1End, 11000)); }
+    else musicSwitch(2);
+  } else curTrack = 2;
+  enterScene(0, { delay: 1100 });
+  if (innerHeight > innerWidth && innerWidth < 700) setTimeout(function () { toast('Putar HP ke mode landscape agar tampilan lebih besar 📱'); }, 2400);
+  setTimeout(function () { el.classList.add('gone'); }, 2000);
 }
 
 function clearTimers() { clearTimeout(timer); clearTimeout(capTimer); timer = capTimer = 0; token++; }
@@ -336,13 +355,13 @@ function setProgress(sceneIdx, segIdx) {
   for (var i = 0; i < fills.length; i++) fills[i].style.width = (i < sceneIdx ? 100 : i === sceneIdx ? Math.round(part * 100) : 0) + '%';
   bar.setAttribute('aria-valuenow', Math.round((sceneIdx + part) / TOTAL * 100));
 }
-function setCounter(a, b) {
-  var c = $('counter'); c.firstChild.textContent = a; c.lastChild.textContent = b || '';
+function setCounter(a, b, short) {
+  var c = $('counter'); c.firstChild.textContent = a; c.firstChild.setAttribute('data-short', short || a); c.lastChild.textContent = b || '';
   c.setAttribute('aria-label', a + (b ? ': ' + b : ''));
 }
 function updateUI() {
   var sc = SCENES[S.scene];
-  setCounter('Adegan ' + sc.id + ' dari ' + TOTAL, sc.title);
+  setCounter('Adegan ' + sc.id + ' dari ' + TOTAL, sc.title, sc.id + '/' + TOTAL);
 }
 function flashChapter(sc) {
   var c = $('chapter'); c.textContent = 'Adegan ' + sc.id + ' • ' + sc.title;
@@ -357,7 +376,7 @@ function renderText(seg, ms, instant) {
   else { who.hidden = true; glass.style.removeProperty('--c'); }
   glass.classList.toggle('has-who', !!seg.who);
   textEl.textContent = '';
-  var words = seg.t.split(/\s+/), span = Math.min(ms * 0.55, words.length * 300);
+  var words = seg.t.split(/\s+/), span = Math.min(ms * 0.7, words.length * 320);
   for (var i = 0; i < words.length; i++) {
     var s = document.createElement('span'); s.className = 'w';
     s.textContent = words[i];
@@ -401,13 +420,14 @@ function enterScene(i, opts) {
   var sc = SCENES[i], my = token;
   var target = layers[0] === cur ? layers[1] : layers[0];
   var im = buildLayer(target, sc, i); applyLayout(sc); fitCards();
-  clearText(); updateUI(); setProgress(i, -1); preload(i + 1); preload(i + 2);
+  clearText(); updateUI(); setProgress(i, -1); preload(i + 1);
   afterImg(im, function () {
     if (my !== token) return;
     target.classList.add('active'); if (cur && cur !== target) cur.classList.remove('active'); cur = target;
     void im.offsetWidth; im.classList.add('kb');
     fx.set(sc.fx, S.playing); $('light').classList.toggle('on', !!sc.light);
     flashChapter(sc);
+    setTimeout(function () { if (my === token) preload(i + 2); }, 2500);     // gambar berikutnya diunduh bertahap
     if (!S.playing) { renderText(sc.segs[0], 0, true); return; }
     timer = setTimeout(function () {
       if (my !== token) return;
@@ -443,7 +463,7 @@ function playSegment(k) {
     var li = document.createElement('li'); li.style.animationDelay = (0.4 + i * 0.35) + 's'; li.style.setProperty('--c', COL[i % 5]);
     var em = document.createElement('span'); em.className = 'em'; em.textContent = m[0];
     var box = document.createElement('div'), t = document.createElement('b'), d = document.createElement('small');
-    t.textContent = m[1]; d.textContent = m[2]; box.appendChild(t); box.appendChild(document.createElement('br')); box.appendChild(d);
+    t.textContent = m[1]; d.textContent = m[2]; box.appendChild(t); box.appendChild(d); t.style.display = 'block';
     li.appendChild(em); li.appendChild(box); ul.appendChild(li);
   });
   $('closing').textContent = CLOSING;
@@ -548,7 +568,7 @@ $('btnNext').onclick = next;
 $('btnSpeed').onclick = cycleSpeed;
 $('btnVoice').onclick = toggleVoice;
 (function () { var m = document.querySelectorAll('.js-music'); for (var i = 0; i < m.length; i++) m[i].onclick = toggleMusic; })();
-$('introSkip').onclick = function () { endIntro(true); };
+$('startPlay').onclick = $('startBtn').onclick = startStory;
 $('btnFull').onclick = toggleFs;
 $('btnReplay').onclick = restart;
 if (canSpeak) $('btnVoice').hidden = false;
@@ -558,7 +578,7 @@ document.addEventListener('pointerdown', function (e) {
   if (leaving || S.intro) return;
   if (e.target.closest && e.target.closest('.ui')) { showUI(); return; }
   if (e.target.closest && e.target.closest('.cta')) return;
-  if (body.classList.contains('show-ui') && S.playing) hideUI(); else showUI();
+  if (e.pointerType !== 'mouse' && body.classList.contains('show-ui') && S.playing) hideUI(); else showUI();   // sentuhan: ketuk = tampil/sembunyi; mouse: selalu tampil
 });
 document.addEventListener('pointermove', function (e) { if (e.pointerType === 'mouse' && !leaving && !S.intro) { if (!body.classList.contains('show-ui')) showUI(); else if (S.playing) { clearTimeout(uiT); uiT = setTimeout(hideUI, 4500); } } });
 document.addEventListener('focusin', function (e) { if (e.target.closest && e.target.closest('.ui')) showUI(); });
@@ -587,7 +607,11 @@ document.addEventListener('keydown', function (e) {
   var k = e.key; if (!k || k === 'Unidentified') k = KEYCODE[e.keyCode] || k;
   if (S.intro) {
     if (k === 'Home' || k === 'Backspace') { e.preventDefault(); goHome(); }
-    else if (tag !== 'BUTTON' && (k === 'Enter' || k === ' ' || k === 'ArrowRight')) { e.preventDefault(); endIntro(true); }
+    else if (tag !== 'BUTTON' && (k === 'Enter' || k === ' ' || k === 'ArrowRight')) { e.preventDefault(); startStory(); }
+    else if (tag === 'BUTTON' && (k === 'ArrowDown' || k === 'ArrowUp' || k === 'ArrowLeft' || k === 'ArrowRight')) {
+      e.preventDefault(); var order = [$('startPlay'), $('startBtn')], ix = order.indexOf(t);
+      if (ix > -1) order[(ix + 1) % 2].focus({ preventScroll: true });
+    }
     else if (k === 'm' || k === 'M') toggleMusic();
     return;
   }
@@ -638,7 +662,7 @@ var fx = (function () {
   }
   function make(tp) {
     var area = W * H / 1000000, n, i; parts = [];
-    n = tp === 'rain' ? Math.min(130, Math.round(60 + area * 40)) : tp === 'stars' ? 48 : tp === 'fireflies' ? 20 : tp === 'confetti' ? 46 : 30;
+    n = tp === 'rain' ? Math.min(130, Math.round(60 + area * 40)) : tp === 'stars' ? 48 : tp === 'fireflies' ? 20 : tp === 'confetti' ? 30 : 30;
     for (i = 0; i < n; i++) parts.push({ x: rnd(W), y: tp === 'stars' ? rnd(H * 0.5) : rnd(H), p: rnd(6.28), s: 0.4 + rnd(1), c: RB[i % 6], l: 10 + rnd(14) });
   }
   function draw(dt) {
@@ -658,9 +682,11 @@ var fx = (function () {
         ctx.globalAlpha = 0.25 + 0.6 * Math.abs(Math.sin(tm * 0.025 * p.s + p.p)); var z = 14 + p.s * 10; ctx.drawImage(sp, p.x - z / 2, p.y - z / 2, z, z); }
       ctx.globalAlpha = 1;
     } else if (type === 'confetti') {
+      ctx.globalAlpha = 0.7;
       for (i = 0; i < parts.length; i++) { p = parts[i]; p.y += (1.1 + p.s * 1.5) * dt; p.x += Math.sin(tm * 0.02 + p.p) * 0.7 * dt; p.r = (p.r || 0) + 0.05 * dt * p.s;
         if (p.y > H + 20) { p.y = -20; p.x = rnd(W); }
         ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.c; ctx.fillRect(-4, -2.5, 8 + p.s * 3, 5); ctx.restore(); }
+      ctx.globalAlpha = 1;
     } else if (type === 'sparkle') {
       for (i = 0; i < parts.length; i++) { p = parts[i]; p.y -= 0.12 * p.s * dt; p.x += Math.sin(tm * 0.01 + p.p) * 0.2 * dt; if (p.y < -20) { p.y = H + 10; p.x = rnd(W); }
         ctx.globalAlpha = 0.15 + 0.7 * Math.abs(Math.sin(tm * 0.03 * p.s + p.p)); var q = 10 + p.s * 14; ctx.drawImage(sprite(p.c), p.x - q / 2, p.y - q / 2, q, q); }
@@ -686,8 +712,9 @@ var fx = (function () {
 
 /* ============ Siklus hidup ============ */
 document.addEventListener('visibilitychange', function () {
+  body.classList.toggle('hidden-page', document.hidden);
   if (document.hidden) {
-    if (S.playing && !leaving && !S.intro) { S.auto = true; pause(true); }
+    if (S.playing && !leaving && !S.intro && !S.ended) { S.auto = true; pause(true); }
     fx.stop(); var ca = AUDIO[curTrack]; if (ca) { try { ca.pause(); } catch (e) {} }
   } else {
     if (S.auto) { S.auto = false; play(); }
@@ -698,9 +725,9 @@ document.addEventListener('fullscreenchange', function () { $('btnFull').setAttr
 window.addEventListener('pageshow', function (e) { if (e.persisted && leaving) { leaving = false; $('fade').classList.remove('on'); S.playing = false; pause(); } });
 
 window.onerror = function () { return true; };    // jangan tampilkan error ke anak
-preload(0); preload(1);
+preload(0);
 setMusicUI();
 applyLayout(SCENES[0]);
 startIntro();
-if (innerHeight > innerWidth && innerWidth < 700) setTimeout(function () { toast('Putar HP ke mode landscape agar tampilan lebih besar 📱'); }, 1500);
+
 })();

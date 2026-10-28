@@ -8,7 +8,7 @@
 <meta name="description" content="Dongeng interaktif anak: Tiga Dino Sahabat Hebat — Petualangan Mencari Pelangi Ajaib.">
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/fredoka-latin-wght-normal.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/nunito-latin-wght-normal.woff2" crossorigin>
-<link rel="preload" as="image" href="assets/images/adegan-01.jpg">
+<link rel="preload" as="image" type="image/webp" href="assets/images/adegan-01.webp">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -26,23 +26,25 @@
 </svg>
 
 <main id="app" aria-label="Dongeng Tiga Dino Sahabat Hebat">
-  <section id="intro" aria-label="Pembukaan cerita">
+  <section id="intro" aria-label="Layar pembuka">
     <button class="btn gl js-music" type="button" aria-label="Matikan musik" aria-pressed="true"><svg class="m-on"><use href="#i-note"/></svg><svg class="m-off"><use href="#i-noteoff"/></svg></button>
     <div class="intro-inner">
       <p class="il i1" id="iKicker"></p>
       <h1 class="il i2" id="iTitle"></h1>
       <p class="il i3" id="iSub"></p>
       <ul class="il i3b cast" aria-label="Tokoh cerita"><li style="--c:#4cc3ff">Dino Biru</li><li style="--c:#ff6b6b">Dino Merah</li><li style="--c:#ffd23f">Dino Kuning</li></ul>
+      <div class="start-wrap">
+        <button class="play3d" id="startPlay" type="button" aria-label="Putar cerita"><span class="halo" aria-hidden="true"></span><span class="disc" aria-hidden="true"><span class="tri"></span></span></button>
+        <button class="cta start" id="startBtn" type="button">MULAI CERITA</button>
+      </div>
       <p class="il i4" id="iPurpose"></p>
       <p class="il i5" id="iCredit"></p>
     </div>
-    <p id="iHint">🎵 Ketuk layar untuk menyalakan musik</p>
-    <button class="skip gl" id="introSkip" type="button" aria-label="Lewati pembukaan">Lewati ›</button>
   </section>
 
   <div id="stage">
-    <div class="layer" id="layerA"><div class="bgblur"></div><div class="frame"><div class="card"><img alt="" decoding="async"></div></div><div class="fallback">🦖 Gambar sedang bersembunyi… ceritanya tetap berlanjut ya!</div></div>
-    <div class="layer" id="layerB"><div class="bgblur"></div><div class="frame"><div class="card"><img alt="" decoding="async"></div></div><div class="fallback">🦖 Gambar sedang bersembunyi… ceritanya tetap berlanjut ya!</div></div>
+    <div class="layer" id="layerA"><div class="bgblur"></div><div class="frame"><div class="card"><img alt="" decoding="async" draggable="false"></div></div><div class="fallback">🦖 Gambar sedang bersembunyi… ceritanya tetap berlanjut ya!</div></div>
+    <div class="layer" id="layerB"><div class="bgblur"></div><div class="frame"><div class="card"><img alt="" decoding="async" draggable="false"></div></div><div class="fallback">🦖 Gambar sedang bersembunyi… ceritanya tetap berlanjut ya!</div></div>
   </div>
   <div id="light" aria-hidden="true"></div>
   <canvas id="fx" aria-hidden="true"></canvas>
@@ -81,14 +83,14 @@
   <section id="ending" aria-label="Penutup cerita">
     <button class="btn gl js-music" id="endMusic" type="button" aria-label="Matikan musik" aria-pressed="true"><svg class="m-on"><use href="#i-note"/></svg><svg class="m-off"><use href="#i-noteoff"/></svg></button>
     <div class="pane pane1">
-      <h2>Bersama Sahabat, Kita Hebat! 🌈🦖</h2>
+      <h2><span class="gt">Bersama Sahabat, Kita Hebat!</span> <span class="emo">🌈🦖</span></h2>
       <h3>Pesan Moral</h3>
       <ul id="morals"></ul>
     </div>
     <div class="pane pane2">
       <figure class="end-art"><img id="endImg" alt="Tiga dino melambai ceria di bawah pelangi" decoding="async"></figure>
       <div class="end-copy">
-        <h2>Tamat 🌈</h2>
+        <h2><span class="gt">Tamat</span> <span class="emo">🌈</span></h2>
         <p id="closing"></p>
         <div class="actions">
           <button class="cta" id="btnReplay" type="button">↻ Ulangi Cerita</button>
