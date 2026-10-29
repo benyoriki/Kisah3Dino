@@ -1,0 +1,301 @@
+{
+ "versi": 1,
+ "catatan": "Sumber tunggal teks cerita. Edit file ini (bukan script.js). Gambar: assets/images/adegan-NN.webp/.jpg sesuai id adegan.",
+ "titleText": "Tiga Dino Sahabat Hebat. Petualangan Mencari Pelangi Ajaib.",
+ "intro": {
+  "kicker": "Dongeng Interaktif untuk Anak",
+  "title": "Tiga Dino Sahabat Hebat",
+  "sub": "Petualangan Mencari Pelangi Ajaib 🌈",
+  "purpose": "Cerita ini mengajak adik-adik belajar berani mencoba, tidak mudah menyerah, saling membantu, berpikir sebelum bertindak, dan menjaga alam bersama sahabat.",
+  "credit": "Dibuat oleh <b>Belajar Bermain</b> • belajarbermain.online"
+ },
+ "cast": {
+  "Dino Biru": "#4cc3ff",
+  "Dino Merah": "#ff6b6b",
+  "Dino Kuning": "#ffd23f"
+ },
+ "scenes": [
+  {
+   "id": 1,
+   "title": "Tiga Sahabat Hebat",
+   "alt": "Dino Biru, Dino Merah, dan Dino Kuning berdiri ceria di lembah penuh bunga.",
+   "fx": "fireflies",
+   "ar": 1.82,
+   "lines": [
+    "Pada suatu pagi yang cerah, di sebuah lembah yang indah, hiduplah tiga sahabat dinosaurus. Mereka adalah Dino Biru yang pemberani, Dino Merah yang kuat dan bersemangat, serta Dino Kuning yang pintar dan selalu tersenyum.",
+    "Setiap hari mereka bermain bersama. Namun, hari itu mereka ingin melakukan sesuatu yang berbeda. Mereka ingin menjelajahi dunia dan menemukan sebuah tempat ajaib yang konon memiliki pelangi paling indah di seluruh lembah!",
+    "“Teman-teman, bagaimana kalau hari ini kita bertualang?” ajak Dino Biru.",
+    "“Horeee! Aku siap!” seru Dino Merah sambil melompat kegirangan.",
+    "Dino Kuning tertawa bahagia. “Ayo! Petualangan baru menanti kita!”"
+   ]
+  },
+  {
+   "id": 2,
+   "title": "Peta Rahasia",
+   "alt": "Ketiga dino melihat peta tua dengan tanda pelangi dan tanda silang.",
+   "fx": "fireflies",
+   "ar": 1.36,
+   "lines": [
+    "Sebelum berangkat, Dino Kuning mengeluarkan sebuah peta tua yang ditemukan di dekat rumahnya.",
+    "“Lihat! Di peta ini ada tanda pelangi dan tanda silang. Mungkin di sanalah tempat ajaib itu berada!” katanya dengan mata berbinar.",
+    "Dino Merah mendekat sambil mengangguk-angguk. “Wah, seperti mencari harta karun!”",
+    "Dino Biru memperhatikan jalur pada peta. “Kalau kita mengikuti petunjuknya bersama-sama, pasti kita bisa sampai ke sana.”",
+    "Mereka membawa bekal, mengencangkan tas kecil Dino Biru, lalu berangkat dengan langkah penuh semangat. Tak seorang pun tahu kejutan apa yang menunggu mereka di ujung perjalanan."
+   ]
+  },
+  {
+   "id": 3,
+   "title": "Menyusuri Hutan Ceria",
+   "alt": "Tiga dino berjalan di hutan hijau dengan bunga dan kupu-kupu.",
+   "fx": "fireflies",
+   "ar": 1.16,
+   "lines": [
+    "Ketiga sahabat memasuki hutan yang dipenuhi pepohonan hijau, bunga warna-warni, dan kupu-kupu yang beterbangan.",
+    "“Wah, lihat bunga itu! Cantik sekali!” seru Dino Kuning.",
+    "Dino Merah berputar kecil dengan gembira. “Dan lihat kupu-kupu itu! Aku ingin mengikutinya!”",
+    "“Tunggu, Merah! Kita harus tetap bersama dan mengikuti peta,” kata Dino Biru dengan lembut.",
+    "Dino Merah pun tertawa malu. “Hehehe, benar juga!”",
+    "Mereka melanjutkan perjalanan sambil menyapa burung-burung dan mendengarkan suara alam. Mereka belajar bahwa petualangan terasa lebih menyenangkan ketika dilakukan bersama teman-teman."
+   ]
+  },
+  {
+   "id": 4,
+   "title": "Menyeberangi Sungai",
+   "alt": "Para dino melompati batu-batu di sungai jernih dekat air terjun.",
+   "fx": "sparkle",
+   "ar": 1.32,
+   "lines": [
+    "Tak lama kemudian, mereka tiba di sebuah sungai jernih dengan air terjun yang mengalir deras. Untuk melanjutkan perjalanan, mereka harus melewati batu-batu besar di tengah sungai.",
+    "Dino Merah langsung maju. “Aku bisa melompat jauh!”",
+    "Namun, ketika menginjak batu yang licin, kakinya hampir terpeleset.",
+    "“Hati-hati, Merah!” seru Dino Biru.",
+    "Dino Kuning menunjuk batu yang lebih lebar. “Coba lewat batu yang itu. Kelihatannya lebih aman!”",
+    "Dino Biru berjalan lebih dulu untuk menunjukkan jalannya. Dino Merah mengikuti dengan hati-hati, sementara Dino Kuning memberi semangat dari belakang.",
+    "Akhirnya, mereka berhasil menyeberang. “Kita berhasil!” teriak mereka bertiga.",
+    "Mereka pun belajar bahwa keberanian harus disertai kehati-hatian."
+   ]
+  },
+  {
+   "id": 5,
+   "title": "Hujan Tak Terduga",
+   "alt": "Tiga dino berteduh di bawah daun besar saat hujan turun.",
+   "fx": "rain",
+   "ar": 1.77,
+   "lines": [
+    "Ketika mereka melanjutkan perjalanan, awan mendung tiba-tiba menutupi langit. Tak lama kemudian, hujan turun membasahi hutan.",
+    "“Aduh, hujan! Aku tidak mau tas kecilku basah!” kata Dino Biru.",
+    "Dino Kuning menemukan daun besar yang bisa mereka gunakan sebagai payung. Mereka pun duduk berdekatan di bawah daun itu.",
+    "Dino Merah menggoyangkan ekornya dan berkata, “Kalau kita menunggu bersama, hujan tidak terasa membosankan!”",
+    "Mereka tertawa sambil mendengarkan suara rintik hujan. Dino Kuning bahkan membuat permainan menebak suara: apakah itu suara katak, burung, atau tetesan air?",
+    "Ketika hujan mulai reda, mereka kembali bersemangat. Mereka sadar bahwa perubahan rencana bukan alasan untuk berhenti bergembira."
+   ]
+  },
+  {
+   "id": 6,
+   "title": "Malam Penuh Bintang",
+   "alt": "Para dino berkemah di dekat api unggun di bawah bulan dan bintang.",
+   "fx": "stars",
+   "ar": 1.7,
+   "lines": [
+    "Hari mulai gelap, sehingga ketiga sahabat memutuskan untuk beristirahat di tempat perkemahan yang aman.",
+    "Mereka memasang tenda kecil dan duduk bersama di dekat api unggun yang dijaga dengan aman oleh orang dewasa di dekat perkemahan.",
+    "Dino Merah memandang langit. “Wah, bintangnya banyak sekali!”",
+    "Dino Biru menunjuk bulan yang bersinar. “Mungkin pelangi yang kita cari berada di balik pegunungan itu.”",
+    "Dino Kuning tersenyum. “Besok kita lanjutkan perjalanan. Sekarang waktunya beristirahat agar tubuh kita kuat!”",
+    "Mereka saling bercerita, mengucapkan selamat malam, lalu tidur dengan nyaman. Malam itu mereka bermimpi tentang petualangan yang lebih seru."
+   ]
+  },
+  {
+   "id": 7,
+   "title": "Menolong Teman Baru",
+   "alt": "Para dino bertemu kelinci putih di dekat batang pohon tumbang.",
+   "fx": "fireflies",
+   "ar": 1.56,
+   "lines": [
+    "Keesokan paginya, mereka kembali berjalan. Di dekat sebuah batang pohon tumbang, mereka melihat seekor kelinci putih kecil yang kebingungan.",
+    "“Kenapa kamu terlihat sedih?” tanya Dino Kuning.",
+    "“Aku tidak tahu bagaimana melewati batang pohon ini untuk pulang,” jawab kelinci.",
+    "Dino Merah segera mendekat. “Jangan khawatir! Kami akan membantumu.”",
+    "Dino Biru memeriksa jalan di sekeliling batang pohon, sementara Dino Kuning menunjukkan jalur kecil yang aman di sampingnya. Dino Merah menemani kelinci melewati jalan tersebut.",
+    "“Terima kasih, teman-teman!” kata kelinci dengan gembira.",
+    "Mereka pun melanjutkan perjalanan dengan hati hangat. Menolong orang lain ternyata membuat hari mereka semakin menyenangkan."
+   ]
+  },
+  {
+   "id": 8,
+   "title": "Jembatan Persahabatan",
+   "alt": "Dino Biru membantu Dino Merah melewati celah berbatu, Dino Kuning menunggu.",
+   "fx": "sparkle",
+   "ar": 1.7,
+   "lines": [
+    "Di depan mereka terbentang celah berbatu yang harus dilewati. Tidak ada jembatan, hanya jalur sempit yang menghubungkan kedua sisi.",
+    "Dino Merah menelan ludah. “Hmm, sepertinya agak menakutkan.”",
+    "Dino Biru tidak memaksanya. “Tidak apa-apa merasa takut. Kita cari jalan yang lebih aman.”",
+    "Dino Kuning melihat sekeliling dan menemukan jalan memutar yang landai. Mereka berjalan perlahan, saling menunggu, dan memastikan tak seorang pun tertinggal.",
+    "Ketika akhirnya tiba di seberang, Dino Merah bersorak, “Ternyata aku bisa melewati rasa takutku!”",
+    "“Betul!” kata Dino Biru. “Berani bukan berarti tidak takut, tetapi berusaha mengambil langkah yang tepat.”",
+    "Mereka pun saling memberi tos dengan bangga."
+   ]
+  },
+  {
+   "id": 9,
+   "title": "Petunjuk dari Burung Biru",
+   "alt": "Burung biru hinggap di dahan dan memberi petunjuk kepada tiga dino.",
+   "fx": "fireflies",
+   "ar": 1.52,
+   "lines": [
+    "Saat beristirahat di bawah pohon, mereka mendengar suara, “Cuit-cuit! Kalian sedang mencari apa?”",
+    "Seekor burung biru cantik hinggap di dahan.",
+    "Dino Biru menjawab, “Kami sedang mencari tempat pelangi yang ada di peta.”",
+    "Burung itu mengepakkan sayapnya. “Aku pernah melihat cahaya warna-warni di balik lembah. Ikuti jalan menuju bukit besar, lalu carilah gua yang memiliki batu berkilau!”",
+    "“Terima kasih, Burung Biru!” seru Dino Kuning.",
+    "Burung itu terbang melintasi pepohonan, seolah-olah menunjukkan arah kepada mereka.",
+    "Ketiga sahabat kembali berjalan dengan harapan baru. Mereka belajar bahwa mendengarkan orang lain bisa membantu menemukan jalan keluar."
+   ]
+  },
+  {
+   "id": 10,
+   "title": "Bertemu Keluarga Dino",
+   "alt": "Dinosaurus hijau besar dan anak-anaknya menyapa tiga sahabat.",
+   "fx": "fireflies",
+   "ar": 1.62,
+   "lines": [
+    "Dalam perjalanan menuju bukit, mereka bertemu dinosaurus hijau yang lebih besar bersama anak-anaknya.",
+    "“Halo, teman-teman! Kalian mau ke mana?” tanya dinosaurus besar dengan ramah.",
+    "Dino Kuning menunjukkan peta mereka. “Kami mencari tempat pelangi ajaib!”",
+    "Dinosaurus besar tersenyum. “Kalian berada di jalur yang benar. Namun, dekat gua nanti jalannya cukup gelap. Berjalanlah bersama dan jangan terburu-buru.”",
+    "Dino Merah menyapa anak-anak dinosaurus kecil. Mereka tertawa dan bermain sebentar sebelum berpamitan.",
+    "“Semoga kalian menemukan pelangi!” kata keluarga dinosaurus itu.",
+    "Ketiga sahabat melanjutkan perjalanan dengan hati gembira. Kini mereka tahu bahwa dunia penuh dengan teman baik yang siap berbagi petunjuk."
+   ]
+  },
+  {
+   "id": 11,
+   "title": "Gua Misterius",
+   "alt": "Tiga dino berdiri di depan gua besar dengan cahaya kecil berkilauan.",
+   "fx": "sparkle",
+   "ar": 1.66,
+   "lines": [
+    "Akhirnya, mereka tiba di depan sebuah gua besar yang dikelilingi tanaman hijau. Dari dalam gua tampak cahaya kecil berkilauan.",
+    "Dino Merah berbisik, “Apakah ada harta karun di dalamnya?”",
+    "Dino Biru memegang lentera kecil. “Kita boleh penasaran, tetapi harus tetap berhati-hati.”",
+    "Dino Kuning mengangguk. “Kita masuk hanya sejauh yang aman dan tetap bersama-sama.”",
+    "Dengan langkah perlahan, mereka memperhatikan dinding gua yang dihiasi batu-batu berkilau. Setiap langkah membuat mereka menemukan sesuatu yang baru.",
+    "Tiba-tiba, cahaya warna-warni terlihat dari sudut gua.",
+    "“Teman-teman! Lihat itu!” seru Dino Kuning.",
+    "Mereka saling berpandangan dengan mata berbinar. Apa yang akan mereka temukan di sana?"
+   ]
+  },
+  {
+   "id": 12,
+   "title": "Kristal Cahaya Pelangi",
+   "alt": "Kristal besar memancarkan cahaya pelangi di tengah gua berkilau.",
+   "fx": "sparkle",
+   "light": true,
+   "ar": 1.89,
+   "lines": [
+    "Di tengah gua, mereka menemukan sebuah kristal besar yang memancarkan cahaya merah, jingga, kuning, hijau, biru, dan ungu.",
+    "“Indah sekali!” bisik Dino Biru.",
+    "Dino Merah melompat kegirangan. “Apakah ini harta karun yang kita cari?”",
+    "Dino Kuning memperhatikan cahaya yang memantul di dinding gua. “Mungkin kristal ini yang membuat langit di luar terlihat berwarna-warni!”",
+    "Mereka tidak mengambil kristal itu. Sebaliknya, mereka duduk sejenak untuk menikmati keindahannya dan memastikan tempat itu tetap terjaga.",
+    "Dino Biru tersenyum. “Ternyata, menemukan sesuatu yang indah tidak selalu berarti kita harus memilikinya.”",
+    "Mereka merasa bahagia karena berhasil menemukan keajaiban alam bersama-sama."
+   ]
+  },
+  {
+   "id": 13,
+   "title": "Pelangi Impian",
+   "alt": "Tiga dino duduk di bukit memandang pelangi raksasa di atas lembah.",
+   "fx": "sparkle",
+   "light": true,
+   "ar": 1.78,
+   "lines": [
+    "Setelah keluar dari gua, mereka mendaki bukit kecil. Tiba-tiba, sinar matahari menembus sisa awan hujan dan sebuah pelangi raksasa muncul di atas lembah.",
+    "Merah, jingga, kuning, hijau, biru, nila, dan ungu membentang indah di langit.",
+    "“Itu dia! Pelangi yang kita cari!” teriak Dino Merah.",
+    "Dino Kuning bertepuk tangan. “Warnanya jauh lebih indah daripada yang kubayangkan!”",
+    "Dino Biru memandang kedua sahabatnya. “Perjalanan kita panjang, tetapi kita berhasil karena tidak menyerah dan selalu bekerja sama.”",
+    "Mereka duduk berdampingan, menikmati pemandangan yang menakjubkan.",
+    "Pada saat itu, mereka menyadari bahwa perjalanan bersama teman-teman sama berharganya dengan tempat indah yang mereka temukan."
+   ]
+  },
+  {
+   "id": 14,
+   "title": "Hadiah Terindah",
+   "alt": "Tiga dino berpelukan gembira di bawah cahaya senja dengan hati bersinar.",
+   "fx": "sparkle",
+   "ar": 1.32,
+   "lines": [
+    "Ketiga sahabat berpelukan dengan gembira. Dino Merah tertawa, Dino Kuning tersenyum lebar, dan Dino Biru merasa sangat bersyukur.",
+    "“Hari ini aku belajar bahwa kita bisa melakukan banyak hal jika saling membantu,” kata Dino Merah.",
+    "“Aku belajar bahwa kita harus teliti dan tidak terburu-buru,” tambah Dino Kuning.",
+    "Dino Biru mengangguk. “Dan aku belajar bahwa sahabat yang baik selalu saling mendukung.”",
+    "Mereka kemudian membuat janji untuk selalu membantu teman, menjaga alam, dan tidak mudah menyerah saat menghadapi kesulitan.",
+    "Bagi mereka, hadiah terindah bukanlah kristal ajaib, melainkan persahabatan yang semakin kuat."
+   ]
+  },
+  {
+   "id": 15,
+   "title": "Mimpi Petualangan Berikutnya",
+   "alt": "Tiga dino memandang matahari terbenam dari atas bukit.",
+   "fx": "fireflies",
+   "ar": 1.19,
+   "lines": [
+    "Senja mulai tiba. Langit berubah menjadi jingga, merah muda, dan keemasan.",
+    "Ketiga sahabat duduk di atas bukit sambil memandang matahari yang perlahan tenggelam.",
+    "Dino Kuning berkata, “Menurut kalian, petualangan apa lagi yang bisa kita lakukan besok?”",
+    "Dino Merah langsung menjawab, “Mencari air terjun rahasia! Atau membantu hewan-hewan di hutan!”",
+    "Dino Biru tertawa. “Apa pun petualangannya, kita harus merencanakannya dengan baik.”",
+    "Mereka pulang dengan hati penuh kenangan indah. Meskipun kaki mereka lelah, senyum mereka tak pernah hilang.",
+    "Malam nanti, mereka akan beristirahat. Besok, siapa tahu, petualangan baru sudah menunggu!"
+   ]
+  },
+  {
+   "id": 16,
+   "title": "Bersama Sahabat, Kita Hebat!",
+   "alt": "Tiga dino melambai ceria di bawah pelangi dengan papan Bersama Sahabat, Setiap Petualangan Jadi Lebih Hebat.",
+   "fx": "sparkle",
+   "light": true,
+   "ar": 1.39,
+   "lines": [
+    "Sejak hari itu, Dino Biru, Dino Merah, dan Dino Kuning semakin dikenal sebagai tiga sahabat yang selalu membawa keceriaan.",
+    "Mereka tahu bahwa setiap perjalanan pasti memiliki tantangan. Terkadang ada jalan yang sulit, hujan yang datang tiba-tiba, atau rasa takut yang membuat mereka ragu.",
+    "Namun, mereka juga tahu bahwa selalu ada cara untuk belajar, mencoba kembali, meminta bantuan, dan saling menyemangati.",
+    "“Aku berani mencoba!” seru Dino Biru.",
+    "“Aku siap membantu!” kata Dino Merah.",
+    "“Dan aku akan mencari jalan yang baik!” tambah Dino Kuning.",
+    "Mereka tertawa bersama di bawah pelangi yang indah.",
+    "Tamat. Sampai jumpa di petualangan berikutnya!"
+   ]
+  }
+ ],
+ "morals": [
+  {
+   "icon": "💪",
+   "title": "Berani mencoba",
+   "text": "Jangan takut belajar hal baru."
+  },
+  {
+   "icon": "🌟",
+   "title": "Tidak mudah menyerah",
+   "text": "Kalau belum berhasil, cobalah lagi dengan cara yang lebih baik."
+  },
+  {
+   "icon": "🤝",
+   "title": "Saling membantu",
+   "text": "Teman yang baik saling mendukung."
+  },
+  {
+   "icon": "🤔",
+   "title": "Berpikir sebelum bertindak",
+   "text": "Perhatikan keadaan dan pilih jalan yang aman."
+  },
+  {
+   "icon": "🌳",
+   "title": "Menjaga alam",
+   "text": "Keindahan alam harus dijaga bersama."
+  }
+ ],
+ "closing": "Adik-adik, kalian juga bisa menjadi hebat seperti Dino Biru, Dino Merah, dan Dino Kuning! Teruslah belajar, berani mencoba, sayangi teman-teman, dan jangan menyerah ketika menghadapi kesulitan. Karena setiap langkah kecil bisa membawa kita menuju petualangan yang luar biasa. Sampai jumpa, teman-teman cilik!"
+}
