@@ -7,7 +7,8 @@ Dongeng interaktif bergaya film untuk anak. HTML5 + CSS3 + JavaScript murni (tan
 Tiga-Dino/
 ├── index.html
 ├── style.css
-├── script.js          ← data 16 adegan (SCENES), timer, navigasi, narasi suara, efek
+├── script.js          ← logika: pemuat data, timer, navigasi, narasi suara, efek (tanpa teks cerita)
+├── data/cerita.json   ← SEMUA teks & metadata cerita (16 adegan, intro, pesan moral, penutup)
 ├── assets/images/     ← adegan-01.webp … 16.webp (utama) + .jpg (cadangan TV lama)
 ├── assets/fonts/      ← Fredoka & Nunito (lisensi OFL), dipasang lokal tanpa CDN
 ├── assets/audio/      ← lagu_01.mp3 (pembuka), lagu_02.mp3 (musik cerita, diulang; 96 kbps ±2,3 MB)
@@ -37,7 +38,7 @@ Semua path relatif, jadi bisa juga dibuka dari subfolder situs lain.
 Tombol Home menghentikan cerita, suara, dan timer, fade-out, lalu membuka https://belajarbermain.online/ di tab yang sama.
 
 ## Menyesuaikan
-- **Teks/adegan**: edit array `SCENES` di `script.js` (`lines`, `title`, `fx`, `light`).
+- **Teks/adegan**: edit `data/cerita.json` (bukan `script.js`). Per adegan: `id`, `title`, `alt` (teks alternatif gambar), `fx` (rain | stars | fireflies | sparkle), `light` (opsional), `ar` (rasio lebar/tinggi gambar), `lines` (narasi & dialog berurutan; baris bertanda kutip “ ” dianggap dialog). Bagian lain: `intro`, `cast` (warna tokoh), `morals`, `closing`, `titleText`. Gambar diambil dari `assets/images/adegan-NN.webp/.jpg` sesuai `id`.
 - **Kecepatan baca**: `WPM`, `MIN_MS`, `MAX_MS`, dan `SPEEDS` di bagian atas `script.js` (default ±170 kata/menit).
 - **Narasi suara**: memakai Web Speech API bila perangkat punya suara bahasa Indonesia; bila tidak, tombol memberi pesan ramah dan cerita tetap berjalan. Fungsi `speak()` terisolasi sehingga mudah diganti dengan file audio rekaman (`assets/audio/`) di pengembangan berikutnya.
 - **Pembukaan**: layar judul dengan tombol Play 3D emas dan "MULAI CERITA". Ubah teksnya di objek `INTRO` (`script.js`).
@@ -58,3 +59,10 @@ Tombol Home menghentikan cerita, suara, dan timer, fade-out, lalu membuka https:
 - Narasi dipecah per kalimat (maks. 24 kata), dialog tidak terpotong; panel lebih rapat di HP landscape.
 - Zoom kamera lebih halus (3,5%), crossfade 1,6 detik, latar blur statis.
 - Klik mouse selalu menampilkan kontrol; sentuhan tetap tampil/sembunyi.
+
+## Perubahan v5 (integrasi dengan situs utama)
+- Data cerita dipindah dari `script.js` ke `data/cerita.json` (isi identik dengan v4: 16 adegan, intro, 5 pesan moral, penutup — diverifikasi otomatis). `script.js` memuat JSON lewat XHR, memvalidasi isinya, lalu menjalankan cerita. Jika JSON gagal dimuat, tampil layar ramah dengan tombol **Coba lagi** dan **Kembali ke Beranda** (bukan layar kosong).
+- **Penting saat menguji lokal:** karena data dimuat dari file, buka lewat server (mis. `python3 -m http.server` lalu http://localhost:8000/). Membuka `index.html` langsung via `file://` akan ditolak browser tertentu.
+- Tombol 🏠 (dan Home/Backspace pada keyboard/remote) membuka https://belajarbermain.online/ di tab yang sama (`HOME_URL` di bagian atas `script.js`).
+- Proyek ini tidak memakai service worker/manifest; cache ditangani browser (GitHub Pages ±10 menit). Situs cerita butuh internet; ia tidak tersedia offline hanya karena situs utama bisa offline.
+- Cara memperbarui di GitHub Pages: unggah isi folder ini ke repositori `Kisah3Dino` (termasuk folder `data/`), commit, tunggu 1–2 menit. Tidak perlu menyentuh repositori Buku Belajar Anak.
