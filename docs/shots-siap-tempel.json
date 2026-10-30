@@ -1,0 +1,304 @@
+{
+ "_petunjuk": "SIAP TEMPEL. Daftar 'shots' LENGKAP (menggantikan isi 'shots' adegan terkait di data/cerita.json). Pakai HANYA setelah file gambar resolusi tinggi (disarankan 1600x900, tanpa label/bingkai) bernama sama sudah ada di assets/images/ (.webp + .jpg). Semua 'match' sudah divalidasi terhadap naskah. Entri 'main' = kembali ke gambar utama.",
+ "shots": {
+  "1": [
+   {
+    "match": "Teman-teman, bagaimana kalau hari ini kita bertualang",
+    "image": "assets/images/01c-dino-biru-mengajak.webp",
+    "alt": "Dino Biru mengajak bertualang dengan tangan terbuka.",
+    "ar": 1.78
+   },
+   {
+    "match": "Horeee! Aku siap!",
+    "image": "assets/images/01a-dino-merah-melompat.webp",
+    "alt": "Dino Merah melompat kegirangan di jalan tanah, Dino Biru dan Dino Kuning ikut ceria.",
+    "ar": 1.0
+   },
+   {
+    "match": "Dino Kuning tertawa bahagia.",
+    "image": "assets/images/01b-dino-kuning-menunjuk.webp",
+    "alt": "Dino Kuning tersenyum lebar sambil menunjuk ke arah petualangan.",
+    "ar": 1.0,
+    "revertAt": 0.55
+   }
+  ],
+  "3": [
+   {
+    "match": "Wah, lihat bunga itu",
+    "image": "assets/images/03c-dino-kuning-kagum-bunga.webp",
+    "alt": "Dino Kuning mengagumi bunga-bunga warna-warni.",
+    "ar": 1.78
+   },
+   {
+    "match": "Dino Merah berputar kecil dengan gembira",
+    "image": "assets/images/03b-dino-merah-mengejar-kupu-kupu.webp",
+    "alt": "Dino Merah berlari gembira mengejar kupu-kupu biru di antara bunga.",
+    "ar": 1.78
+   },
+   {
+    "match": "Tunggu, Merah! Kita harus tetap bersama",
+    "image": "assets/images/03a-dino-biru-ekspresi-dekat.webp",
+    "alt": "Dino Biru dari dekat, mengingatkan teman-temannya dengan lembut.",
+    "ar": 1.0
+   },
+   {
+    "match": "Dino Merah pun tertawa malu",
+    "image": "main"
+   }
+  ],
+  "4": [
+   {
+    "match": "Namun, ketika menginjak batu yang licin",
+    "image": "assets/images/04a-dino-merah-terpeleset-di-sungai.webp",
+    "alt": "Dino Merah hampir terpeleset di batu sungai; Dino Biru menolong dan Dino Kuning menunjuk batu yang aman.",
+    "ar": 1.78
+   },
+   {
+    "match": "Dino Kuning menunjuk batu yang lebih lebar",
+    "image": "assets/images/04b-dino-kuning-menunjuk-batu.webp",
+    "alt": "Dino Kuning menunjuk batu yang lebih lebar dan aman.",
+    "ar": 1.78
+   },
+   {
+    "match": "Dino Biru berjalan lebih dulu",
+    "image": "main"
+   }
+  ],
+  "5": [
+   {
+    "match": "Tak lama kemudian, hujan turun",
+    "image": "assets/images/05b-awan-mendung-hujan.webp",
+    "alt": "Awan mendung dan hujan turun di hutan.",
+    "ar": 1.78
+   },
+   {
+    "match": "Dino Kuning menemukan daun besar",
+    "image": "assets/images/05a-berteduh-di-bawah-daun-saat-hujan.webp",
+    "alt": "Ketiga dino berteduh di bawah daun besar saat hujan turun.",
+    "ar": 1.78
+   },
+   {
+    "match": "Ketika hujan mulai reda",
+    "image": "main"
+   }
+  ],
+  "6": [
+   {
+    "match": "Dino Merah memandang langit",
+    "image": "assets/images/06a-berkemah-di-bawah-bintang.webp",
+    "alt": "Ketiga dino duduk dekat api unggun, memandang bulan dan bintang.",
+    "ar": 1.78
+   },
+   {
+    "match": "Mereka saling bercerita",
+    "image": "assets/images/06b-tidur-di-bawah-bulan.webp",
+    "alt": "Ketiga dino tidur nyenyak di bawah bulan dan bintang.",
+    "ar": 1.78
+   }
+  ],
+  "7": [
+   {
+    "match": "Aku tidak tahu bagaimana melewati batang pohon",
+    "image": "assets/images/07b-kelinci-bingung.webp",
+    "alt": "Kelinci putih kecil kebingungan di dekat batang pohon.",
+    "ar": 1.78
+   },
+   {
+    "match": "Dino Merah segera mendekat",
+    "image": "main"
+   },
+   {
+    "match": "Dino Biru memeriksa jalan di sekeliling batang pohon",
+    "image": "assets/images/07a-menolong-kelinci-di-batang-pohon.webp",
+    "alt": "Para dino membantu kelinci putih melewati batang pohon tumbang.",
+    "ar": 1.78
+   },
+   {
+    "match": "Terima kasih, teman-teman!",
+    "image": "main"
+   }
+  ],
+  "8": [
+   {
+    "match": "Di depan mereka terbentang celah berbatu",
+    "image": "assets/images/08a-celah-berbatu-jembatan.webp",
+    "alt": "Celah berbatu dalam dengan jalur sempit.",
+    "ar": 1.78
+   },
+   {
+    "match": "Dino Merah menelan ludah",
+    "image": "assets/images/08b-dino-merah-takut.webp",
+    "alt": "Dino Merah tampak takut di tepi celah.",
+    "ar": 0.76
+   },
+   {
+    "match": "Dino Biru tidak memaksanya",
+    "image": "main"
+   },
+   {
+    "match": "Dino Kuning melihat sekeliling dan menemukan jalan memutar",
+    "image": "assets/images/08c-tiga-dino-jalan-memutar.webp",
+    "alt": "Ketiga dino berjalan hati-hati di jalan memutar yang landai.",
+    "ar": 1.78
+   },
+   {
+    "match": "Ketika akhirnya tiba di seberang",
+    "image": "main"
+   }
+  ],
+  "9": [
+   {
+    "match": "Seekor burung biru cantik hinggap di dahan",
+    "image": "assets/images/09a-burung-biru-memberi-petunjuk.webp",
+    "alt": "Burung biru hinggap di dahan dan memberi petunjuk; gua terlihat di kejauhan.",
+    "ar": 1.75
+   },
+   {
+    "match": "Burung itu terbang melintasi pepohonan",
+    "image": "assets/images/09b-burung-terbang-menunjuk-jalan.webp",
+    "alt": "Burung biru terbang di atas pepohonan menunjukkan arah.",
+    "ar": 1.78
+   }
+  ],
+  "10": [
+   {
+    "match": "Dino Kuning menunjukkan peta mereka",
+    "image": "assets/images/10a-keluarga-dino-lihat-peta.webp",
+    "alt": "Dinosaurus hijau besar dan anak-anaknya melihat peta.",
+    "ar": 1.78
+   },
+   {
+    "match": "Dino Merah menyapa anak-anak dinosaurus kecil",
+    "image": "assets/images/10b-anak-dino-bermain.webp",
+    "alt": "Dino Merah bermain bersama anak-anak dinosaurus.",
+    "ar": 1.78
+   },
+   {
+    "match": "Semoga kalian menemukan pelangi",
+    "image": "assets/images/10c-keluarga-dino-berpamitan.webp",
+    "alt": "Keluarga dinosaurus melambai perpisahan.",
+    "ar": 1.78
+   }
+  ],
+  "11": [
+   {
+    "match": "Dino Biru memegang lentera kecil",
+    "image": "assets/images/11b-dino-biru-lentera.webp",
+    "alt": "Dino Biru memegang lentera di dalam gua.",
+    "ar": 1.78
+   },
+   {
+    "match": "Dengan langkah perlahan, mereka memperhatikan dinding gua",
+    "image": "assets/images/11a-menemukan-gua-kristal.webp",
+    "alt": "Para dino menemukan dinding gua berkristal dengan cahaya pelangi misterius.",
+    "ar": 1.78
+   }
+  ],
+  "12": [
+   {
+    "match": "Di tengah gua, mereka menemukan sebuah kristal besar",
+    "image": "assets/images/12a-kristal-pelangi-besar.webp",
+    "alt": "Kristal besar memancarkan cahaya pelangi.",
+    "ar": 1.78
+   },
+   {
+    "match": "Indah sekali!",
+    "image": "assets/images/12b-dino-biru-terpesona.webp",
+    "alt": "Dino Biru terpesona melihat kristal.",
+    "ar": 0.64
+   },
+   {
+    "match": "Dino Merah melompat kegirangan",
+    "image": "assets/images/12c-dino-merah-melompat.webp",
+    "alt": "Dino Merah melompat kegirangan di dekat kristal.",
+    "ar": 0.64
+   },
+   {
+    "match": "Dino Kuning memperhatikan cahaya",
+    "image": "assets/images/12d-dino-kuning-mengamati-cahaya.webp",
+    "alt": "Dino Kuning mengamati pantulan cahaya kristal.",
+    "ar": 0.53
+   },
+   {
+    "match": "Mereka tidak mengambil kristal itu",
+    "image": "main"
+   }
+  ],
+  "13": [
+   {
+    "match": "Setelah keluar dari gua, mereka mendaki bukit kecil",
+    "image": "assets/images/13b-mendaki-bukit.webp",
+    "alt": "Ketiga dino mendaki bukit kecil.",
+    "ar": 1.78
+   },
+   {
+    "match": "Merah, jingga, kuning, hijau, biru, nila",
+    "image": "assets/images/13a-pelangi-panorama.webp",
+    "alt": "Pelangi raksasa di atas lembah dan air terjun.",
+    "ar": 1.78
+   },
+   {
+    "match": "Itu dia! Pelangi yang kita cari",
+    "image": "assets/images/13c-tiga-dino-kagum-pelangi.webp",
+    "alt": "Ketiga dino memandang pelangi dengan gembira.",
+    "ar": 1.78
+   }
+  ],
+  "14": [
+   {
+    "match": "Hari ini aku belajar bahwa kita bisa melakukan banyak hal",
+    "image": "assets/images/14b-dino-merah-dan-biru.webp",
+    "alt": "Dino Merah dan Dino Biru tersenyum bahagia.",
+    "ar": 1.78
+   },
+   {
+    "match": "Aku belajar bahwa kita harus teliti",
+    "image": "assets/images/14c-dino-biru-dan-kuning.webp",
+    "alt": "Dino Biru dan Dino Kuning tersenyum hangat.",
+    "ar": 1.78
+   },
+   {
+    "match": "Mereka kemudian membuat janji",
+    "image": "main"
+   }
+  ],
+  "15": [
+   {
+    "match": "Menurut kalian, petualangan apa lagi",
+    "image": "assets/images/15b-tiga-dino-merencanakan.webp",
+    "alt": "Ketiga dino membicarakan petualangan berikutnya dengan peta.",
+    "ar": 1.78
+   },
+   {
+    "match": "Mereka pulang dengan hati penuh kenangan",
+    "image": "main"
+   }
+  ],
+  "16": [
+   {
+    "match": "Aku berani mencoba!",
+    "image": "assets/images/16a-dino-biru-closeup.webp",
+    "alt": "Dino Biru tersenyum percaya diri.",
+    "ar": 0.42
+   },
+   {
+    "match": "Aku siap membantu!",
+    "image": "assets/images/16b-dino-merah-closeup.webp",
+    "alt": "Dino Merah tersenyum ceria.",
+    "ar": 0.45
+   },
+   {
+    "match": "Dan aku akan mencari jalan yang baik!",
+    "image": "assets/images/16c-dino-kuning-closeup.webp",
+    "alt": "Dino Kuning tersenyum hangat.",
+    "ar": 0.39
+   },
+   {
+    "match": "Mereka tertawa bersama di bawah pelangi",
+    "image": "assets/images/16d-penutup-pelangi.webp",
+    "alt": "Ketiga dino tersenyum bersama di bawah pelangi.",
+    "ar": 1.78
+   }
+  ]
+ }
+}
