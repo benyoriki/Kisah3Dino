@@ -62,6 +62,46 @@ SCENES.forEach(function (sc) {
   sc.duration = sc.segs.reduce(function (a, s) { return a + readMs(s.t); }, TAIL_MS);   // ms pada kecepatan Normal
 });
 
+/* ============ Sistem ilustrasi dinamis: "shots" per adegan (data/cerita.json) ============
+   Tiap shot = { match, image, alt?, ar?, revertAt? }. `match` dicocokkan ke TEKS SEGMEN AKTUAL (hasil splitLong),
+   bukan indeks. Gambar berlaku sejak segmen yang memuat `match` sampai segmen berikutnya yang punya shot lain.
+   image "main" = kembali ke gambar utama adegan. Segmen sebelum shot pertama memakai gambar utama (fallback). */
+var REPORT = { warnings: [], plans: {} };
+function vwarn(msg) { REPORT.warnings.push(msg); try { console.warn('[Tiga Dino] ' + msg); } catch (e) {} }
+function normT(s) { return s.replace(/[“”]/g, '"').replace(/[‘’]/g, "'").replace(/\s+/g, ' ').replace(/^\s|\s$/g, '').toLowerCase(); }
+function webpPath(p) { return WEBP ? p : p.replace(/\.webp$/i, '.jpg'); }
+function pad2(n) { return (n < 10 ? '0' : '') + n; }
+function buildPlan(sc) {
+  var n = sc.segs.length, i, off = [], full = '', prev = 0;
+  for (i = 0; i < n; i++) { off.push(full.length); full += (i ? ' ' : '') + normT(sc.segs[i].t); }
+  var main = { src: sc.image, alt: sc.alt, ar: sc.ar, main: true, start: 0, ret: 0 };
+  var plan = [main], list = sc.shots || [], taken = {};
+  var idRe = new RegExp('(^|/)(adegan-)?' + pad2(sc.id) + '[a-z]?[-.]');
+  for (var s = 0; s < list.length; s++) {
+    var sh = list[s], tag = 'Adegan ' + sc.id + ' shot #' + (s + 1);
+    if (!sh || typeof sh.match !== 'string' || !sh.match || typeof sh.image !== 'string' || !sh.image) { vwarn(tag + ': "match" dan "image" wajib diisi — dilewati.'); continue; }
+    var isMain = sh.image === 'main' || sh.image === 'utama';
+    if (!isMain && !idRe.test(sh.image)) { vwarn(tag + ': nama file "' + sh.image + '" tidak berawalan nomor adegan ' + pad2(sc.id) + ' — dilewati agar tidak salah adegan.'); continue; }
+    var m = normT(sh.match), idx = full.indexOf(m, off[prev]);
+    if (idx < 0) { vwarn(tag + ': teks "' + sh.match + '" tidak ditemukan (atau urutannya mundur) — dilewati.'); continue; }
+    if (full.indexOf(m, idx + 1) > -1) vwarn(tag + ': teks "' + sh.match + '" muncul lebih dari sekali; dipakai kemunculan pertama. Perpanjang teks agar unik.');
+    var seg = 0; while (seg + 1 < n && off[seg + 1] <= idx) seg++;
+    if (taken[seg] || (plan.length > 1 && seg < plan[plan.length - 1].start)) { vwarn(tag + ': jatuh di segmen yang sama dengan shot sebelumnya — dilewati.'); continue; }
+    var v = isMain ? { src: sc.image, alt: sc.alt, ar: sc.ar, main: true } : { src: webpPath(sh.image), alt: sh.alt || sc.alt, ar: sh.ar || sc.ar };
+    v.start = seg; v.ret = (sh.revertAt > 0 && sh.revertAt < 1) ? sh.revertAt : 0;
+    taken[seg] = 1; if (seg === 0) plan[0] = v; else plan.push(v);
+    prev = seg;
+  }
+  sc.plan = plan; sc.segView = [];
+  for (var p = 0; p < plan.length; p++) {
+    var e = p + 1 < plan.length ? plan[p + 1].start : n, ms = 0;
+    for (i = plan[p].start; i < e; i++) { ms += readMs(sc.segs[i].t); sc.segView[i] = plan[p]; }
+    plan[p].end = e - 1; plan[p].kd = (ms + (e === n ? TAIL_MS : 0)) / 1000 + 6; plan[p].idx = p;
+  }
+  REPORT.plans[sc.id] = plan.map(function (v) { return { seg: v.start, image: v.src, revertAt: v.ret || undefined }; });
+}
+SCENES.forEach(buildPlan);
+
 /* ============ Elemen & status ============ */
 function $(id) { return document.getElementById(id); }
 var body = document.body, app = $('app');
@@ -69,7 +109,8 @@ var layers = [$('layerA'), $('layerB')], cur = null;
 var textEl = $('text'), glass = $('glass'), bar = $('progress'), fills = [];
 (function () { for (var i = 0; i < TOTAL; i++) { var c = document.createElement('i'), b = document.createElement('b'); b.style.background = 'hsl(' + Math.round(i * 22) + ',92%,62%)'; c.appendChild(b); bar.appendChild(c); fills.push(b); } })()
 var S = { intro: false, music: true, scene: 0, seg: 0, playing: true, speed: 1, voice: false, ended: false, endPane: 1, auto: false };
-var timer = 0, capTimer = 0, token = 0, uiT = 0, toastT = 0, chapT = 0, leaving = false;
+var timer = 0, capTimer = 0, retT = 0, token = 0, uiT = 0, toastT = 0, chapT = 0, leaving = false;
+var shotTok = 0, shown = null, reverted = '';   // ilustrasi: token permintaan ganti gambar, gambar yang tampil, penanda 'kembali ke utama'
 body.className = '';
 var reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
 
@@ -141,7 +182,7 @@ function startStory() {
   setTimeout(function () { el.classList.add('gone'); }, 2000);
 }
 
-function clearTimers() { clearTimeout(timer); clearTimeout(capTimer); timer = capTimer = 0; token++; }
+function clearTimers() { clearTimeout(timer); clearTimeout(capTimer); clearTimeout(retT); timer = capTimer = retT = 0; token++; }
 
 /* ============ Narasi suara (Web Speech API, opsional) ============ */
 var synth = window.speechSynthesis, canSpeak = !!synth && typeof SpeechSynthesisUtterance !== 'undefined';
@@ -181,24 +222,40 @@ function runTimed(text, ms, done) {
 }
 
 /* ============ Tampilan adegan ============ */
-var cache = {};
-function preload(i) {
-  if (i < 0 || i >= TOTAL || cache[i]) return;
-  var im = new Image(); im.decoding = 'async'; im.src = SCENES[i].image; cache[i] = im;
+var IMGS = {};                               // cache per URL: { im, state: loading|ok|bad, cbs }
+function loadImg(src, cb) {                  // muat sekali; cb(ok) dipanggil saat siap/gagal
+  var r = IMGS[src];
+  if (!r) {
+    r = IMGS[src] = { state: 'loading', cbs: [] };
+    var im = new Image(); im.decoding = 'async'; r.im = im;
+    var fin = function (ok) { r.state = ok ? 'ok' : 'bad'; if (!ok) vwarn('Gambar gagal dimuat: ' + src); var c = r.cbs; r.cbs = []; for (var i = 0; i < c.length; i++) c[i](ok); };
+    im.onload = function () { fin(true); }; im.onerror = function () { fin(false); };
+    im.src = src;
+  }
+  if (cb) { if (r.state === 'loading') r.cbs.push(cb); else cb(r.state === 'ok'); }
+}
+function preload(i) { if (i >= 0 && i < TOTAL) loadImg(SCENES[i].plan[0].src); }
+function preloadAhead(sc, k) {               // muat 1–2 gambar berikutnya dalam adegan ini (bertahap, tidak menghambat narasi)
+  var v = sc.segView[Math.max(0, k)], p = v ? v.idx : 0;
+  if (sc.plan[p + 1]) loadImg(sc.plan[p + 1].src);
+  if (sc.plan[p + 2]) setTimeout(function () { loadImg(sc.plan[p + 2].src); }, 1500);
 }
 var DIRS = [['-1.2%', '-.8%'], ['1.2%', '-.6%'], ['0', '-1.2%'], ['-1%', '.9%'], ['1%', '.7%']];
-function buildLayer(el, sc, i) {
+function buildLayer(el, v, i) {
   var im = el.querySelector('img');
-  el.classList.remove('broken'); el.setAttribute('data-ar', sc.ar);
+  el.classList.remove('broken'); el.setAttribute('data-ar', v.ar);
   im.classList.remove('kb');
   im.onerror = function () { el.classList.add('broken'); };
-  im.onload = function () { el.classList.remove('broken'); };
-  im.alt = sc.alt;
-  im.src = sc.image;
-  el.querySelector('.bgblur').style.backgroundImage = 'url("' + sc.image + '")';
+  im.onload = function () {                  // rasio asli gambar menang atas data (tidak ada gepeng/terpotong salah)
+    el.classList.remove('broken');
+    if (im.naturalWidth && im.naturalHeight) { el.setAttribute('data-ar', im.naturalWidth / im.naturalHeight); fitCards(); }
+  };
+  im.alt = v.alt;
+  im.src = v.src;
+  el.querySelector('.bgblur').style.backgroundImage = 'url("' + v.src + '")';
   var d = DIRS[i % DIRS.length];
   im.style.setProperty('--kx', d[0]); im.style.setProperty('--ky', d[1]);
-  im.style.setProperty('--kd', (sc.duration / 1000 + 6) + 's');
+  im.style.setProperty('--kd', v.kd + 's');
   return im;
 }
 function afterImg(im, cb, max) {
@@ -206,6 +263,40 @@ function afterImg(im, cb, max) {
   function once() { if (fired) return; fired = true; cb(); }
   if (im.complete) { once(); return; }
   im.addEventListener('load', once); im.addEventListener('error', once); setTimeout(once, max);
+}
+
+/* Ganti ilustrasi di tengah adegan: crossfade halus antar layerA/layerB; gambar lama tetap tampil sampai gambar baru siap */
+function viewFor(sc, k) {
+  var v = sc.segView[Math.max(0, k)] || sc.plan[0];
+  if (v.ret && reverted === sc.id + ':' + k) return { src: sc.image, alt: sc.alt, ar: sc.ar, main: true, kd: v.kd, idx: 0 };   // shot sudah 'kembali ke utama'
+  return v;
+}
+function syncShot(k) {
+  var sc = SCENES[S.scene], v = viewFor(sc, k), my = S.scene, tok = ++shotTok;
+  if (shown && shown.src === v.src) return;           // gambar masih relevan → tidak diganti
+  loadImg(v.src, function (ok) {
+    if (tok !== shotTok || my !== S.scene) return;    // permintaan usang (pindah segmen/adegan)
+    if (!ok) return;                                  // gagal → pertahankan gambar sebelumnya
+    if (!S.playing) return;                           // sedang dijeda → tidak ada gambar berganti; Play → playSegment() menyinkronkan lagi
+    swapTo(v, tok);
+  });
+}
+function swapTo(v, tok) {
+  var target = layers[0] === cur ? layers[1] : layers[0], old = cur, ix = S.scene + v.idx + 1;
+  var im = buildLayer(target, v, ix); fitCards();
+  afterImg(im, function () {
+    if (tok !== shotTok || !cur) return;
+    var go = function () {
+      if (tok !== shotTok) return;
+      target.classList.add('xf-in'); old.classList.add('xf-out');
+      void target.offsetWidth;
+      target.classList.add('active'); old.classList.remove('active');
+      void im.offsetWidth; im.classList.add('kb');
+      cur = target; shown = v;
+      setTimeout(function () { target.classList.remove('xf-in'); old.classList.remove('xf-out'); }, 750);
+    };
+    if (im.decode) { var d = false, once = function () { if (!d) { d = true; go(); } }; im.decode().then(once, once); setTimeout(once, 600); } else go();
+  }, 4000);
 }
 
 function setProgress(sceneIdx, segIdx) {
@@ -273,18 +364,21 @@ window.addEventListener('resize', function () { applyLayout(); fitCards(); });
 function enterScene(i, opts) {
   opts = opts || {};
   clearTimers(); stopSpeech(); showTitle(false);
+  shotTok++; reverted = '';
+  for (var q = 0; q < layers.length; q++) layers[q].classList.remove('xf-in', 'xf-out');
   S.ended = false; body.classList.remove('is-end'); $('ending').classList.remove('on', 'p1', 'p2');
   S.scene = i; S.seg = 0;
   var sc = SCENES[i], my = token;
   var target = layers[0] === cur ? layers[1] : layers[0];
-  var im = buildLayer(target, sc, i); applyLayout(sc); fitCards();
+  var v0 = sc.plan[0], im = buildLayer(target, v0, i); applyLayout(sc); fitCards();
   clearText(); updateUI(); setProgress(i, -1); preload(i + 1);
   afterImg(im, function () {
     if (my !== token) return;
-    target.classList.add('active'); if (cur && cur !== target) cur.classList.remove('active'); cur = target;
+    target.classList.add('active'); if (cur && cur !== target) cur.classList.remove('active'); cur = target; shown = v0;
     void im.offsetWidth; im.classList.add('kb');
     fx.set(sc.fx, S.playing); $('light').classList.toggle('on', !!sc.light);
     flashChapter(sc);
+    preloadAhead(sc, 0);
     setTimeout(function () { if (my === token) preload(i + 2); }, 2500);     // gambar berikutnya diunduh bertahap
     if (!S.playing) { renderText(sc.segs[0], 0, true); return; }
     timer = setTimeout(function () {
@@ -311,7 +405,13 @@ function playSegment(k) {
   var ms = (readMs(seg.t) + (last ? TAIL_MS : 0)) * SPEEDS[S.speed].mul;
   setProgress(S.scene, k);
   renderText(seg, ms, false);
+  syncShot(k); preloadAhead(sc, k);          // ilustrasi mengikuti segmen; tidak pernah menunggu/menghambat narasi
   runTimed(seg.t, ms, function () { if (last) next(); else playSegment(k + 1); });
+  var sv = sc.segView[k];
+  if (sv && sv.ret && sv.end === k && reverted !== sc.id + ':' + k) {   // shot berakhir di tengah segmen → kembali ke gambar utama (proporsional kecepatan)
+    var myt = token; clearTimeout(retT);      // token diambil SESUDAH runTimed (runTimed menaikkan token)
+    retT = setTimeout(function () { if (myt !== token || !S.playing) return; reverted = sc.id + ':' + k; syncShot(k); }, ms * sv.ret);
+  }
 }
 
 /* ============ Penutup ============ */
@@ -465,7 +565,7 @@ document.addEventListener('keydown', function (e) {
   var k = e.key; if (!k || k === 'Unidentified') k = KEYCODE[e.keyCode] || k;
   if (S.intro) {
     if (k === 'Home' || k === 'Backspace') { e.preventDefault(); goHome(); }
-    else if (tag !== 'BUTTON' && (k === 'Enter' || k === ' ' || k === 'ArrowRight')) { e.preventDefault(); startStory(); }
+    else if (tag !== 'BUTTON' && tag !== 'A' && (k === 'Enter' || k === ' ' || k === 'ArrowRight')) { e.preventDefault(); startStory(); }
     else if (tag === 'BUTTON' && (k === 'ArrowDown' || k === 'ArrowUp' || k === 'ArrowLeft' || k === 'ArrowRight')) {
       e.preventDefault(); var order = [$('startPlay'), $('startBtn')], ix = order.indexOf(t);
       if (ix > -1) order[(ix + 1) % 2].focus({ preventScroll: true });
@@ -491,7 +591,7 @@ document.addEventListener('keydown', function (e) {
       } else if (k === 'ArrowUp' || k === 'ArrowDown') { showUI(); focusPrimary(); }
       else { showUI(); if (fwd) next(); else prev(); }
       break;
-    case 'Enter': if (onBtn) return; e.preventDefault(); showUI(); focusPrimary(); break;
+    case 'Enter': if (onBtn || tag === 'A') return; e.preventDefault(); showUI(); focusPrimary(); break;
     case 'Escape': if (!fsOn()) hideUI(); break;
     case 'Home': case 'Backspace': e.preventDefault(); goHome(); break;
     case 'f': case 'F': if (!$('btnFull').hidden) toggleFs(); break;
@@ -582,6 +682,7 @@ document.addEventListener('visibilitychange', function () {
 document.addEventListener('fullscreenchange', function () { $('btnFull').setAttribute('aria-label', fsOn() ? 'Keluar layar penuh' : 'Layar penuh'); });
 window.addEventListener('pageshow', function (e) { if (e.persisted && leaving) { leaving = false; $('fade').classList.remove('on'); S.playing = false; pause(); } });
 
+window.TigaDino = { report: REPORT };            // laporan validasi pemetaan ilustrasi (juga tampil di console bila ada peringatan)
 window.onerror = function () { return true; };    // jangan tampilkan error ke anak
 preload(0);
 setMusicUI();

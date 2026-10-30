@@ -229,7 +229,7 @@ body.side .fallback{inset:0 var(--pw) 0 0}
  body.side .glass{padding:8px 12px;min-height:0}
  body.side #text{font-size:clamp(13px,4.1vh,22px);line-height:1.35}
  body.side .who{margin-bottom:.3em;font-size:clamp(11px,3.2vh,16px)}
- #iPurpose,#iCredit,.cast{display:none}
+ #iPurpose,#iCredit,#iDev,.cast{display:none}
  .start-wrap{flex-direction:row;gap:20px;margin:12px 0 0}
  .play3d{--s:clamp(72px,24vh,110px)}
  #morals small{display:none}
@@ -251,3 +251,15 @@ body.side .fallback{inset:0 var(--pw) 0 0}
  #titleCard h1{transition:none;transform:none}
  #ending.p1 #morals li{animation:none;opacity:1;transform:none}
 }
+
+/* ===== Pergantian ilustrasi di tengah adegan (crossfade halus 350–600 ms) =====
+   Gambar baru memudar masuk; gambar lama bertahan sebentar lalu memudar → tidak ada kedipan/layar kosong. */
+.layer.xf-in{transition:opacity .55s ease-in-out}
+.layer.xf-out{transition:opacity .4s ease-in .2s}
+@media (prefers-reduced-motion:reduce){.layer.xf-in,.layer.xf-out{transition:opacity .3s linear 0s}}
+
+/* Kredit pengembang (Intro, Pesan Moral, Tamat) */
+.dev{position:relative;z-index:5;margin-top:clamp(16px,3vmin,28px);font-size:clamp(12px,2vmin,20px);font-weight:700;color:#cfe0ff;text-shadow:0 2px 6px rgba(0,0,0,.6);text-align:center}
+.devlink{color:#ffe770;font-weight:800;text-decoration:underline;text-underline-offset:3px;border-radius:6px;padding:2px 4px;pointer-events:auto}
+.devlink:hover{color:#fff}
+.devlink:focus-visible{outline:3px solid #fff;outline-offset:2px}
