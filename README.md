@@ -9,7 +9,7 @@ Tiga-Dino/
 ├── style.css
 ├── script.js          ← logika: pemuat data, timer, navigasi, narasi suara, efek (tanpa teks cerita)
 ├── data/cerita.json   ← SEMUA teks & metadata cerita (16 adegan, intro, pesan moral, penutup)
-├── assets/images/     ← adegan-01.webp … 16.webp (utama) + ilustrasi tambahan per momen (01a, 02a–02d, 03a, 03b, … 11a)
+├── assets/images/     ← adegan-01.webp … 16.webp (utama) + ilustrasi tambahan per momen (01a, 02a–02d, 03a, 03b, … 11a), masing-masing ada versi .webp dan cadangan .jpg
 ├── assets/fonts/      ← Fredoka & Nunito (lisensi OFL), dipasang lokal tanpa CDN
 ├── assets/audio/      ← lagu_01.mp3 (pembuka), lagu_02.mp3 (musik cerita, diulang; 96 kbps ±2,3 MB)
 └── README.md
@@ -127,3 +127,10 @@ Ukuran disarankan 1600×900 (16:9) ≤ 450 KB; rasio lain (mis. 1:1) tetap tampi
 | 11 | (awal – depan gua s.d. “Kita masuk hanya sejauh yang aman…”) | adegan-11 (utama) |
 | 11 | “Dengan langkah perlahan, mereka memperhatikan dinding gua…” s.d. akhir | 11a-menemukan-gua-kristal |
 | 8, 10, 12–16 | belum ada aset khusus | gambar utama masing-masing |
+
+
+## Perubahan v6
+- **Kredit**: layar pembuka kini menampilkan “Dibuat oleh tim benyoriki.com” (tautan membuka tab baru). Baris “Sistem & website developer…” dihapus dari semua layar.
+- **Cadangan JPG**: untuk setiap gambar `.webp` kini tersedia `.jpg` bernama sama (browser tanpa WebP tidak lagi mengarah ke file yang tidak ada). Browser modern tetap hanya mengunduh `.webp`.
+- **Musik pembuka**: `lagu_01.mp3` tidak ada di proyek ini, sehingga tidak diminta lagi (tidak ada 404); cerita langsung memutar `lagu_02`. Untuk mengaktifkan kembali, letakkan file-nya dan isi `INTRO_TRACK` di `script.js`.
+- **Aset kolase 42 gambar**: tidak dipasang (lihat `docs/LAPORAN-INTEGRASI.md`). Pesanan gambar resolusi tinggi: `docs/PESANAN-ASET.md`; pemetaan yang sudah divalidasi dan siap ditempel: `docs/shots-siap-tempel.json`.

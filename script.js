@@ -121,7 +121,8 @@ function mkAudio(src, loop) {                // dibuat tetapi TIDAK diunduh samp
   a.addEventListener('error', function () { a.bad = true; if (curTrack === 1 && a === AUDIO[1]) musicSwitch(2); });
   return a;
 }
-try { AUDIO[1] = mkAudio('assets/audio/lagu_01.mp3', false); AUDIO[2] = mkAudio('assets/audio/lagu_02.mp3', true); } catch (e) {}
+var INTRO_TRACK = null;   // lagu pembuka opsional, mis. 'assets/audio/lagu_01.mp3' (file itu tidak ada di proyek ini → langsung lagu_02, tanpa 404)
+try { if (INTRO_TRACK) AUDIO[1] = mkAudio(INTRO_TRACK, false); AUDIO[2] = mkAudio('assets/audio/lagu_02.mp3', true); } catch (e) {}
 function musicVol() { return S.voice ? 0.2 : MUSIC_VOL; }   // musik mengecil saat narator bicara
 function fadeTo(a, v, ms, cb) {
   clearInterval(a.fi);
